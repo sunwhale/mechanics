@@ -19,7 +19,7 @@
 {% block content %}
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>试件</h5>
@@ -41,6 +41,36 @@
                 </div>
             </div>
         </div>
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>试件类型</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>试件类型</th>
+                                <th>试件图例</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr> <td> #1 空心圆管 Tubular </td>    <td><img class="card-img-top img-fluid" src="{{ url_for('static', filename='images/HollowSpecimen.jpg') }}"></td> </tr>
+                                <tr> <td> #2 实心圆棒 Round </td>    <td><img class="card-img-top img-fluid" src="{{ url_for('static', filename='images/RoundSpecimen.jpg') }}"></tr>
+                                <tr> <td> #3 板材 Plate </td>    <td><img class="card-img-top img-fluid" src="{{ url_for('static', filename='images/RectangleSpecimen.jpg') }}"></td> </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock content %}

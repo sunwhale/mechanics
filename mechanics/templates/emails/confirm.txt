@@ -1,6 +1,6 @@
 Hello {{ user.username }},
 
-Welcome to Mechanics!
+Welcome to Albumy!
 
 Please visit the link below to verify your email address:
 
