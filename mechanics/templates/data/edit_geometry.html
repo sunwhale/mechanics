@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>试验数据管理系统 | 试件</title>
+
+    <link href="{{ url_for('static', filename='inspinia/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='inspinia/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='inspinia/css/plugins/dataTables/datatables.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='inspinia/css/animate.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='inspinia/css/style.css') }}" rel="stylesheet">
+{% endblock head %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>试件</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ render_form(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block title %}
+    <h2>控制台</h2>
+{% endblock title %}
+
+{% block nav_experiment %}
+                    <li id="nav_experiment" class="active">
+{% endblock nav_experiment %}
+
+{% block script %}
+    <!-- Mainly scripts -->
+    <script src="{{ url_for('static', filename='inspinia/js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/dataTables/datatables.min.js') }}"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="{{ url_for('static', filename='inspinia/js/inspinia.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/pace/pace.min.js') }}"></script>
+    <!-- Page-Level Scripts -->
+{#    {{ super() }}#}
+{#    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>#}
+    <script>
+        $(document).ready(function() {
+            $("#manage_geometry").addClass("active");
+        } );
+    </script>
+{% endblock script %}

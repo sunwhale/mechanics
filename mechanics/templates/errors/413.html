@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %}413 Error{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>错误页面</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+{#                            <img class="card-img-top img-fluid" src="{{ url_for('static', filename='images/error.jpg') }}">#}
+                            <div class="card-body">
+                                <h5 class="card-title">413 Error</h5>
+                                <p class="card-text">Request Entity Too Large</p>
+                            </div>
+                            <a class="btn btn-primary" href="{{ url_for('main.index') }}">返回主页</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}

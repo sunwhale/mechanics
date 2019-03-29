@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% from 'macros.html' import photo_card, user_card with context %}
+
+{% block title %}搜索： {{ q }}{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>搜索</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    {% if results %}
+                        <h5>{{ results|length }} results</h5>
+                        {% for item in results %}
+                            {% if category == 'photo' %}
+                                {{ photo_card(item) }}
+                            {% elif category == 'user' %}
+                                {{ user_card(item) }}
+                            {% else %}
+                                <a class="badge badge-light" href="{{ url_for('.show_tag', tag_id=item.id) }}">
+                                    {{ item.name }} {{ item.photos|length }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+
+                    {% else %}
+                        <h5 class="tip">暂未开通搜索功能。</h5>
+                    {% endif %}
+                </div>
+                {% if results %}
+                    <div class="page-footer">
+                        {{ render_pagination(pagination, align='right') }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <!-- Mainly scripts -->
+    <script src="{{ url_for('static', filename='inspinia/js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="{{ url_for('static', filename='inspinia/js/inspinia.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/pace/pace.min.js') }}"></script>
+{% endblock script %}

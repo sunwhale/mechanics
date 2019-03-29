@@ -1,0 +1,224 @@
+{% from 'bootstrap/nav.html' import render_nav_item %}
+{% from 'bootstrap/nav.html' import render_breadcrumb_item %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>{% block title %}试验数据管理系统{% endblock title %}</title>
+
+    <link href="{{ url_for('static', filename='inspinia/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='inspinia/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="{{ url_for('static', filename='inspinia/css/plugins/toastr/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- Gritter -->
+    <link href="{{ url_for('static', filename='inspinia/js/plugins/gritter/jquery.gritter.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='inspinia/css/animate.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='inspinia/css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    {% endblock head %}
+    <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon">
+</head>
+
+<body>
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav metismenu" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element"> <span>
+                            <img alt="image" class="img-circle" src="{{ url_for('main.get_avatar', filename=current_user.avatar_s) }}" />
+                             </span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{ current_user.name }}</strong>
+                             </span> <span class="text-muted text-xs block">{{ current_user.role.name }}<b class="caret"></b></span> </span> </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="{{ url_for('user.edit_profile') }}">个人设置</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{{ url_for('auth.logout', next=request.full_path) }}">登出</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            DB+
+                        </div>
+                    </li>
+                    {% block nav_experiment %}
+                    <li id="nav_experiment">
+                    {% endblock nav_experiment %}
+                        <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">试验管理</span> <span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li id="manage_experiment"><a href="{{ url_for('data.manage_experiment') }}">试验列表</a></li>
+                            <li id="new_experiment"><a href="{{ url_for('data.new_experiment') }}">添加试验</a></li>
+                            <li id="manage_geometry"><a href="{{ url_for('data.manage_geometry') }}">试件</a></li>
+                            <li id="manage_material"><a href="{{ url_for('data.manage_material') }}">材料</a></li>
+                            <li id="manage_extensometer"><a href="{{ url_for('data.manage_extensometer') }}">引伸计</a></li>
+                        </ul>
+                    </li>
+                    {% block nav_user %}
+                    <li id="nav_user">
+                    {% endblock nav_user %}
+                        <a href="#"><i class="fa fa-user"></i> <span class="nav-label">用戶管理</span> <span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li id="manage_user"><a href="{{ url_for('admin.manage_user') }}">用户</a></li>
+                            <li id="edit_profile"><a href="{{ url_for('user.edit_profile') }}">个人设置</a></li>
+                        </ul>
+                    </li>
+{#                    <li>#}
+{#                        <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">Graphs</span><span class="fa arrow"></span></a>#}
+{#                        <ul class="nav nav-second-level collapse">#}
+{#                            <li><a href="graph_flot.html">Flot Charts</a></li>#}
+{#                            <li><a href="graph_morris.html">Morris.js Charts</a></li>#}
+{#                            <li><a href="graph_rickshaw.html">Rickshaw Charts</a></li>#}
+{#                            <li><a href="graph_chartjs.html">Chart.js</a></li>#}
+{#                            <li><a href="graph_chartist.html">Chartist</a></li>#}
+{#                            <li><a href="c3.html">c3 charts</a></li>#}
+{#                            <li><a href="graph_peity.html">Peity Charts</a></li>#}
+{#                            <li><a href="graph_sparkline.html">Sparkline Charts</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                    <li>#}
+{#                        <a href="css_animation.html"><i class="fa fa-magic"></i> <span class="nav-label">CSS Animations </span><span class="label label-info pull-right">62</span></a>#}
+{#                    </li>#}
+{#                    <li class="landing_link">#}
+{#                        <a target="_blank" href="landing.html"><i class="fa fa-star"></i> <span class="nav-label">Landing Page</span> <span class="label label-warning pull-right">NEW</span></a>#}
+{#                    </li>#}
+{#                    <li class="special_link">#}
+{#                        <a href="package.html"><i class="fa fa-database"></i> <span class="nav-label">Package</span></a>#}
+{#                    </li>#}
+                </ul>
+
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom">
+            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                <form class="navbar-form-custom" action="{{ url_for('main.search') }}">
+                    <div class="form-group">
+                        <input type="text" placeholder="搜索..." class="form-control" name="q">
+                    </div>
+                </form>
+            </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <span class="m-r-sm text-muted welcome-message">欢迎<strong>{{ current_user.name }}</strong>进入试验数据管理系统</span>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('auth.logout', next=request.full_path) }}">
+                            <i class="fa fa-sign-out"></i> 登出
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            </div>
+
+            {% block content %}
+            {% endblock content %}
+
+            <div class="footer">
+                <div class="pull-right">
+                    试验数据管理系统 v1.0
+                </div>
+                <div>
+                    Jingyu Sun &copy; 2018-2019
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% block script %}
+    <!-- Mainly scripts -->
+    <script src="{{ url_for('static', filename='inspinia/js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+
+    <!-- Flot -->
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/flot/jquery.flot.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/flot/jquery.flot.tooltip.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/flot/jquery.flot.spline.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/flot/jquery.flot.resize.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/flot/jquery.flot.pie.js') }}"></script>
+
+    <!-- Peity -->
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/peity/jquery.peity.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/demo/peity-demo.js') }}"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="{{ url_for('static', filename='inspinia/js/inspinia.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/pace/pace.min.js') }}"></script>
+
+    <!-- jQuery UI -->
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+
+    <!-- GITTER -->
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/gritter/jquery.gritter.min.js') }}"></script>
+
+    <!-- Sparkline -->
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/sparkline/jquery.sparkline.min.js') }}"></script>
+
+    <!-- Sparkline demo data  -->
+    <script src="{{ url_for('static', filename='inspinia/js/demo/sparkline-demo.js') }}"></script>
+
+    <!-- ChartJS-->
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/chartJs/Chart.min.js') }}"></script>
+
+    <!-- Toastr -->
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/toastr/toastr.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";
+        {% if current_user.is_authenticated %}
+            var is_authenticated = true;
+        {% else %}
+            var is_authenticated = false;
+        {% endif %}
+    </script>
+
+    {% endblock script %}
+
+{#    <script>#}
+{#        $.fn.dataTable.defaults.oLanguage = {#}
+{#            "sProcessing": "处理中...",#}
+{#            "sLengthMenu": "显示 _MENU_ 项结果",#}
+{#            "sZeroRecords": "没有匹配结果",#}
+{#            "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",#}
+{#            "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",#}
+{#            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",#}
+{#            "sInfoPostFix": "",#}
+{#            "sSearch": "搜索：",#}
+{#            "sUrl": "",#}
+{#            "sEmptyTable": "表中数据为空",#}
+{#            "sLoadingRecords": "载入中...",#}
+{#            "sInfoThousands": ",",#}
+{#            "oPaginate": {#}
+{#                "sFirst": "首页",#}
+{#                "sPrevious": "上页",#}
+{#                "sNext": "下页",#}
+{#                "sLast": "末页"#}
+{#            },#}
+{#            "oAria": {#}
+{#                "sSortAscending": ": 以升序排列此列",#}
+{#                "sSortDescending": ": 以降序排列此列"#}
+{#            }#}
+{#        };#}
+{#    </script>#}
+
+</body>
+</html>
