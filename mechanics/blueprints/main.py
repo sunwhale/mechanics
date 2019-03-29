@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     :author: Jingyu Sun
-    :url: http://greyli.com
+    :url: http://sunjingyu.com
     :copyright: © 2019 Jingyu Sun <sun.jingyu@outlook.com>
     :license: MIT, see LICENSE for more details.
 """

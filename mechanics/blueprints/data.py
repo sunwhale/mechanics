@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     :author: Jingyu Sun
-    :url: http://greyli.com
+    :url: http://sunjingyu.com
     :copyright: © 2019 Jingyu Sun <sun.jingyu@outlook.com>
     :license: MIT, see LICENSE for more details.
 """
@@ -148,6 +148,13 @@ def delete_experiment(experiment_id):
     return redirect(url_for('data.manage_experiment'))
 
 
+@data_bp.route('/experiment/<int:experiment_id>/view', methods=['GET', 'POST'])
+@login_required
+def view_experiment(experiment_id):
+    experiment = Experiment.query.get_or_404(experiment_id)
+    return render_template('data/view_experiment.html', experiment=experiment)
+
+
 @data_bp.route('/geometry/manage')
 @login_required
 def manage_geometry():
@@ -160,7 +167,15 @@ def new_geometry():
     form = CreateGeometryForm()
     if form.validate_on_submit():
         name = form.name.data
-        geometry = Geometry(name=name)
+        axial_mode = form.axial_mode.data
+        D1 = form.D1.data
+        D2 = form.D2.data
+        L = form.L.data
+        geometry = Geometry(name=name,
+                            axial_mode=axial_mode,
+                            D1=D1,
+                            D2=D2,
+                            L=L)
         db.session.add(geometry)
         db.session.commit()
         flash('Geometry created.', 'success')
@@ -178,10 +193,18 @@ def edit_geometry(geometry_id):
         return redirect(url_for('.manage_geometry'))
     if form.validate_on_submit():
         geometry.name = form.name.data
+        geometry.axial_mode = form.axial_mode.data
+        geometry.D1 = form.D1.data
+        geometry.D2 = form.D2.data
+        geometry.L = form.L.data
         db.session.commit()
         flash('Geometry updated.', 'success')
         return redirect(url_for('.manage_geometry'))
     form.name.data = geometry.name
+    form.axial_mode.data = geometry.axial_mode
+    form.D1.data = geometry.D1
+    form.D2.data = geometry.D2
+    form.L.data = geometry.L
     return render_template('data/edit_geometry.html', form=form)
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     :author: Jingyu Sun
-    :url: http://greyli.com
+    :url: http://sunjingyu.com
     :copyright: © 2019 Jingyu Sun <sun.jingyu@outlook.com>
     :license: MIT, see LICENSE for more details.
 """
@@ -24,11 +24,11 @@ class ExperimentForm(FlaskForm):
     temperature_max = FloatField(u'Temperature maximum, ℃', default=20)
     temperature_range = FloatField(u'Temperature range, ℃', default=0)
     axial_mode = SelectField('Axial control mode', coerce=int, default=1)
-    axial_ratio = FloatField('Axial control ratio', default=0)
-    axial_amplitude = FloatField('Axial control amplitude', default=0)
+    axial_ratio = FloatField('Axial ratio', default=0)
+    axial_amplitude = FloatField('Axial amplitude', default=0)
     torsional_mode = SelectField('Torsional control mode', coerce=int, default=1)
-    torsional_ratio = FloatField('Torsional control ratio', default=0)
-    torsional_amplitude = FloatField('Torsional control amplitude', default=0)
+    torsional_ratio = FloatField('Torsional ratio', default=0)
+    torsional_amplitude = FloatField('Torsional amplitude', default=0)
     axial_torsional_phase = FloatField('Axial torsional phase, deg', default=0)
     axial_temperature_phase = FloatField('Axial temperature phase, deg', default=0)
     internal_cooling_air = FloatField('Internal cooling air, l/min', default=0)
@@ -72,11 +72,14 @@ class EditExperimentForm(ExperimentForm):
 class GeometryForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 30)])
     axial_mode = SelectField('Axial mode', coerce=int, default=1)
+    D1 = FloatField('D1/D/W, mm', default=1)
+    D2 = FloatField('D2/B, mm', default=1)
+    L = FloatField('L, mm', default=1)
     submit = SubmitField(u'提交')
 
     def __init__(self, *args, **kwargs):
         super(GeometryForm, self).__init__(*args, **kwargs)
-        self.axial_mode.choices = [(1, ''), (2, 'displacement, mm'), (3, 'axial strain, mm/mm'), (4, 'force, kN')]
+        self.axial_mode.choices = [(1, u'#1 空心圆管 Tubular'), (2, u'#2 实心圆棒 Round'), (3, u'#3 板材 Plate')]
 
 
 class CreateGeometryForm(GeometryForm):

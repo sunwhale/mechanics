@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     :author: Jingyu Sun
-    :url: http://greyli.com
+    :url: http://sunjingyu.com
     :copyright: © 2019 Jingyu Sun <sun.jingyu@outlook.com>
     :license: MIT, see LICENSE for more details.
 """
@@ -280,6 +280,10 @@ class Notification(db.Model):
 class Geometry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
+    axial_mode = db.Column(db.Integer)
+    D1 = db.Column(db.Float)
+    D2 = db.Column(db.Float)
+    L = db.Column(db.Float)
 
     experiments = db.relationship('Experiment', back_populates='geometry', cascade='all')
 

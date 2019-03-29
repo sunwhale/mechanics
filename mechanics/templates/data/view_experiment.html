@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>试验数据管理系统 | 试验列表</title>
+
+    <link href="{{ url_for('static', filename='inspinia/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='inspinia/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='inspinia/css/plugins/dataTables/datatables.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='inspinia/css/animate.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='inspinia/css/style.css') }}" rel="stylesheet">
+{% endblock head %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>试验详情</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table">
+{#                            <thead>#}
+{#                            <tr>#}
+{#                                <th>名称</th>#}
+{#                                <th>数值</th>#}
+{#                            </tr>#}
+{#                            </thead>#}
+                            <tbody>
+                                <tr> <td width="50%"> 试验名称 </td>    <td> {{ experiment.name }}</td> </tr>
+                                <tr> <td> 实验人 </td>    <td> {{ experiment.author.name }}</td> </tr>
+                                <tr> <td> 试验类型 </td>    <td> {{ exp_type_list[experiment.exp_type-1] }}</td> </tr>
+                                <tr> <td> 材料 </td>    <td> {{ experiment.material.name }}</td> </tr>
+                                <tr> <td> 几何形状 </td>    <td> {{ experiment.geometry.name }}</td> </tr>
+                                <tr> <td> 引伸计 </td>    <td> {{ experiment.extensometer.name }}</td> </tr>
+                                <tr> <td> 最高温度 </td>    <td> {{ experiment.temperature_max }}</td> </tr>
+                                <tr> <td> 温度范围 </td>    <td> {{ experiment.temperature_range }}</td> </tr>
+                                <tr> <td> 轴向控制通道 </td>    <td> {{ axial_mode_list[experiment.axial_mode-1] }}</td> </tr>
+                                <tr> <td> 轴向载荷比 </td>    <td> {{ experiment.axial_ratio }}</td> </tr>
+                                <tr> <td> 轴向载荷幅 </td>    <td> {{ experiment.axial_amplitude }}</td> </tr>
+                                <tr> <td> 扭转控制通道 </td>    <td> {{ torsional_mode_list[experiment.torsional_mode-1] }}</td> </tr>
+                                <tr> <td> 扭转载荷比 </td>    <td> {{ experiment.torsional_ratio }}</td> </tr>
+                                <tr> <td> 扭转载荷幅值 </td>    <td> {{ experiment.torsional_amplitude }}</td> </tr>
+                                <tr> <td> 轴向扭转相位角 </td>    <td> {{ experiment.axial_torsional_phase }}</td> </tr>
+                                <tr> <td> 轴向温度相位角 </td>    <td> {{ experiment.axial_temperature_phase }}</td> </tr>
+                                <tr> <td> 内部冷气流量 </td>    <td> {{ experiment.internal_cooling_air }}</td> </tr>
+                                <tr> <td> 寿命 </td>    <td> {{ experiment.life }}</td> </tr>
+                                <tr> <td> 试验频率 </td>    <td> {{ experiment.frequency }}</td> </tr>
+                                <tr> <td> 试验周期 </td>    <td> {{ experiment.period }}</td> </tr>
+                                <tr> <td> 说明 </td>    <td> {{ experiment.body }}</td> </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>试验图表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <img class="card-img-top img-fluid" width="400" src="{{ url_for('static', filename='images/plot_cmp_half_life_cycle_TCIF400.svg') }}">
+                        <img class="card-img-top img-fluid" width="400" src="{{ url_for('static', filename='images/plot_cmp_pv_TCIF400.svg') }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block title %}
+    <h2>控制台</h2>
+{% endblock title %}
+
+{% block nav_experiment %}
+                    <li id="nav_experiment" class="active">
+{% endblock nav_experiment %}
+
+{% block script %}
+    <!-- Mainly scripts -->
+    <script src="{{ url_for('static', filename='inspinia/js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/dataTables/datatables.min.js') }}"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="{{ url_for('static', filename='inspinia/js/inspinia.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspinia/js/plugins/pace/pace.min.js') }}"></script>
+    <!-- Page-Level Scripts -->
+{#    {{ super() }}#}
+{#    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>#}
+    <script>
+        $(document).ready(function() {
+            $("#new_experiment").addClass("active");
+        } );
+    </script>
+{% endblock script %}

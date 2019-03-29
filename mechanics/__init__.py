@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     :author: Jingyu Sun
-    :url: http://greyli.com
+    :url: http://sunjingyu.com
     :copyright: © 2019 Jingyu Sun <sun.jingyu@outlook.com>
     :license: MIT, see LICENSE for more details.
 """
@@ -80,10 +80,16 @@ def register_template_context(app):
         geometries = Geometry.query.order_by(Geometry.id).all()
         extensometers = Extensometer.query.order_by(Extensometer.id).all()
         materials = Material.query.order_by(Material.id).all()
+        axial_mode_list = ['displacement, mm', 'axial strain, mm/mm', 'force, kN', 'other']
+        torsional_mode_list = ['rotation, deg', 'angle strain, deg', 'torque, N*m', 'other']
+        exp_type_list = ['Fatigue', 'Fracture', 'Monotonic', 'other']
         return dict(notification_count=notification_count,
                     geometries=geometries,
                     extensometers=extensometers,
-                    materials=materials)
+                    materials=materials,
+                    axial_mode_list=axial_mode_list,
+                    torsional_mode_list=torsional_mode_list,
+                    exp_type_list=exp_type_list)
 
 
 def register_errorhandlers(app):
@@ -145,7 +151,7 @@ def register_commands(app):
     @click.option('--material', default=5, help='Quantity of materials, default is 5.')
     @click.option('--extensometer', default=5, help='Quantity of extensometers, default is 5.')
     @click.option('--geometry', default=5, help='Quantity of geometries, default is 5.')
-    @click.option('--experiment', default=100, help='Quantity of experiments, default is 100.')
+    @click.option('--experiment', default=500, help='Quantity of experiments, default is 100.')
     def forge(user, follow, photo, tag, collect, comment, material, extensometer, geometry, experiment):
         """Generate fake data."""
 

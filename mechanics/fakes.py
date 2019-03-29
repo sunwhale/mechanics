@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     :author: Jingyu Sun
-    :url: http://greyli.com
+    :url: http://sunjingyu.com
     :copyright: © 2019 Jingyu Sun <sun.jingyu@outlook.com>
     :license: MIT, see LICENSE for more details.
 """
@@ -37,7 +37,7 @@ def fake_admin():
 
 
 def fake_user(count=10):
-    for name in [u'袁荒', u'杨俊杰', u'曾武', u'刘晖', u'杨正茂', u'杨茜茜', u'杨顺', u'庞科技', u'裴长浩']:
+    for name in [u'袁荒', u'杨俊杰', u'曾武', u'刘晖', u'杨正茂', u'杨茜茜', u'杨顺', u'庞科技', u'裴长浩', u'郭凯文', u'罗诚', u'张廷连', u'刘钰锦']:
         user = User(name=name,
                     confirmed=True,
                     username=fake.user_name(),
@@ -158,7 +158,22 @@ def fake_experiment(count=100):
                                 exp_type=random.randint(1, 4),
                                 extensometer=Extensometer.query.get(random.randint(1, Extensometer.query.count())),
                                 geometry=Geometry.query.get(random.randint(1, Geometry.query.count())),
-                                timestamp=fake.date_time_this_year())
+                                timestamp=fake.date_time_this_year(),
+                                temperature_max=random.randint(20, 500),
+                                temperature_range=random.randint(0, 500),
+                                axial_mode=random.randint(1, 3),
+                                axial_ratio=random.randint(-1, 1),
+                                axial_amplitude = random.randint(0, 10),
+                                torsional_mode = random.randint(1, 3),
+                                torsional_ratio = random.randint(-1, 1),
+                                torsional_amplitude = random.randint(0, 10),
+                                axial_torsional_phase = random.randint(1, 180),
+                                axial_temperature_phase = random.randint(1, 180),
+                                internal_cooling_air = random.randint(1, 100),
+                                life = random.randint(100, 100000),
+                                frequency = random.randint(1, 10),
+                                period = random.randint(1, 240),
+                                body=fake.sentence())
         db.session.add(experiment)
         try:
             db.session.commit()
