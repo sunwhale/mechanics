@@ -1,0 +1,2 @@
+FLASK_APP=mechanics
+FLASK_ENV=development
