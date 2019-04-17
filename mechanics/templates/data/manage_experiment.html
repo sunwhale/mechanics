@@ -36,11 +36,11 @@
                         <table class="table table-striped table-bordered table-hover dataTables-example" >
                         <thead>
                             <tr>
-                                <th>试件编号</th>
-                                <th>试验者</th>
-                                <th>材料牌号</th>
-                                <th>试验类型</th>
-                                <th>试验日期</th>
+                                <th width="15%">试件编号</th>
+                                <th width="15%">试验者</th>
+                                <th width="15%">材料牌号</th>
+                                <th width="15%">试验类型</th>
+                                <th width="15%">试验日期</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -143,7 +143,7 @@
                     {
                         data: "6",
                         "render": function( data ){
-                            return "<a href='" + data + "/edit'> 编辑 </a>" + "|" + "<a href='" + data + "/view'> 查看 </a>"
+                            return "<a href='" + data + "/edit'> 编辑 </a>" + "|" + "<a href='" + data + "/view'> 查看 </a>" + "|" + "<a href='" + data + "/datafile'> 数据 </a>"
                         }
                     }
                 ]

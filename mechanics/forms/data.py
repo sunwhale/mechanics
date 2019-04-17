@@ -7,11 +7,12 @@
 """
 from flask_ckeditor import CKEditorField
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, ValidationError, HiddenField, \
-    BooleanField, PasswordField, IntegerField, FloatField
-from wtforms.validators import DataRequired, Email, Length, Optional, URL, NumberRange
+    BooleanField, PasswordField, IntegerField, FloatField, MultipleFileField
+from wtforms.validators import DataRequired, Email, Length, Optional, URL, NumberRange, ValidationError
 
-from mechanics.models import User, Geometry, Extensometer, Experiment, Material
+from mechanics.models import User, Geometry, Extensometer, Experiment, Material, Datafile
 
 
 class ExperimentForm(FlaskForm):
@@ -138,3 +139,29 @@ class EditMaterialForm(MaterialForm):
     def validate_name(self, field):
         if field.data != self.material.name and Material.query.filter_by(name=field.data).first():
             raise ValidationError('The name is already in use.')
+
+
+class DatafileForm(FlaskForm):
+    filename = FileField(u'上传文件', validators=[FileRequired(), FileAllowed(['csv'])])
+    datafile_type = SelectField(u'数据类型', coerce=int, default=1)
+    description = TextAreaField(u'文件说明')
+    submit = SubmitField(u'提交')
+    def __init__(self, *args, **kwargs):
+        super(DatafileForm, self).__init__(*args, **kwargs)
+        self.datafile_type.choices = [(1, u'第一周（时域）'), (2, u'半寿命周（时域）'), (3, u'单调拉伸'), (4, u'峰谷值'), (5, u'其他') ]
+
+
+class CreateDatafileForm(DatafileForm):
+    def validate_name(self, field):
+        if Datafile.query.filter_by(filename=field.data).first():
+            raise ValidationError('The filename is already in use.')
+
+
+class EditDatafileForm(DatafileForm):
+    def __init__(self, datafile, *args, **kwargs):
+        super(EditDatafileForm, self).__init__(*args, **kwargs)
+        self.datafile = datafile
+
+    def validate_name(self, field):
+        if field.data != self.datafile.filename and Datafile.query.filter_by(filename=field.data).first():
+            raise ValidationError('The filename is already in use.')

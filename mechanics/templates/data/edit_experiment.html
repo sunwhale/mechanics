@@ -14,29 +14,53 @@
 
     <link href="{{ url_for('static', filename='inspinia/css/animate.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='inspinia/css/style.css') }}" rel="stylesheet">
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropzone.min.css') }}" type="text/css">
+    {{ dropzone.style('margin: 20px 0; border: 2px dashed #0087F7; min-height: 400px;') }}
 {% endblock head %}
 
 {% block content %}
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
             <div class="col-lg-6">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>添加试验</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>添加试验</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        {{ render_form(form) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>试件类型</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        {{ dropzone.create(action='main.upload') }}
+                        <a class="btn btn-light float-right" href="{{ url_for('user.index', username=current_user.username) }}">
+                            Done
                         </a>
                     </div>
                 </div>
-                <div class="ibox-content">
-                    {{ render_form(form) }}
-                </div>
             </div>
-        </div>
         </div>
     </div>
 {% endblock content %}
@@ -64,6 +88,9 @@
     <!-- Page-Level Scripts -->
 {#    {{ super() }}#}
 {#    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>#}
+{#    {{ super() }}#}
+    <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
+    {{ dropzone.config() }}
     <script>
         $(document).ready(function() {
             $("#new_experiment").addClass("active");

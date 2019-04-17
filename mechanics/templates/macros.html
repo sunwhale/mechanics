@@ -53,3 +53,33 @@
         </form>
     {% endif %}
 {% endmacro %}
+
+{% macro datafile_card(datafile, datafile_type_list) %}
+    <div class="photo-card card">
+        <a class="card-thumbnail" href="{{ url_for('data.get_datafile', filename=datafile.filename) }}">
+            {{ datafile.filename }}
+        </a>
+        <div class="card-body">
+            {{ datafile_type_list[datafile.datafile_type-1] }}
+            说明 {{ datafile.description }}
+            修改日期 {{ datafile.timestamp }}
+        </div>
+        <form class="inline" method="post"
+              action="{{ url_for('.delete_datafile', datafile_id=datafile.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <button type="submit" class="btn btn-danger btn-sm"
+                    onclick="return confirm('是否确定删除文件？');">删除
+            </button>
+        </form>
+    </div>
+{% endmacro %}
+
+{% macro form_field(field) %}
+    {{ field.label }}<br>
+    {{ field(**kwargs) }}<br>
+    {% if field.errors -%}
+        {% for error in field.errors -%}
+            <small class="error">{{ error }}</small><br>
+        {%- endfor %}
+    {%- endif %}
+{% endmacro %}

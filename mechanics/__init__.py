@@ -83,13 +83,15 @@ def register_template_context(app):
         axial_mode_list = ['displacement, mm', 'axial strain, mm/mm', 'force, kN', 'other']
         torsional_mode_list = ['rotation, deg', 'angle strain, deg', 'torque, N*m', 'other']
         exp_type_list = ['Fatigue', 'Fracture', 'Monotonic', 'other']
+        datafile_type_list = [u'第一周（时域）', u'半寿命周（时域）', u'单调拉伸', u'峰谷值', u'其他']
         return dict(notification_count=notification_count,
                     geometries=geometries,
                     extensometers=extensometers,
                     materials=materials,
                     axial_mode_list=axial_mode_list,
                     torsional_mode_list=torsional_mode_list,
-                    exp_type_list=exp_type_list)
+                    exp_type_list=exp_type_list,
+                    datafile_type_list=datafile_type_list)
 
 
 def register_errorhandlers(app):

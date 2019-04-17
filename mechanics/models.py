@@ -326,6 +326,18 @@ class Extensometer(db.Model):
         db.session.commit()
 
 
+class Datafile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(64), unique=True)
+    description = db.Column(db.String(500))
+    datafile_type = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    can_edit = db.Column(db.Boolean, default=True)
+    experiment_id = db.Column(db.Integer, db.ForeignKey('experiment.id'))
+
+    experiment = db.relationship('Experiment', back_populates='datafiles', cascade='all')
+
+
 class Experiment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Integer, unique=True)
@@ -360,6 +372,7 @@ class Experiment(db.Model):
     geometry = db.relationship('Geometry', back_populates='experiments')
     material = db.relationship('Material', back_populates='experiments')
     extensometer = db.relationship('Extensometer', back_populates='experiments')
+    datafiles = db.relationship('Datafile', back_populates='experiment')
 
     def delete(self):
         db.session.delete(self)
@@ -380,6 +393,15 @@ def delete_avatars(**kwargs):
 def delete_photos(**kwargs):
     target = kwargs['target']
     for filename in [target.filename, target.filename_s, target.filename_m]:
+        path = os.path.join(current_app.config['MECHANICS_UPLOAD_PATH'], filename)
+        if os.path.exists(path):  # not every filename map a unique file
+            os.remove(path)
+
+
+@db.event.listens_for(Datafile, 'after_delete', named=True)
+def delete_datafiles(**kwargs):
+    target = kwargs['target']
+    for filename in [target.filename]:
         path = os.path.join(current_app.config['MECHANICS_UPLOAD_PATH'], filename)
         if os.path.exists(path):  # not every filename map a unique file
             os.remove(path)
