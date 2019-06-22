@@ -67,13 +67,13 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Name/username</th>
-                                <th>Role</th>
+                                <th>姓名/用户名</th>
+                                <th>权限</th>
 {#                                <th>Bio</th>#}
 {#                                <th>City</th>#}
-                                <th>Date</th>
+                                <th>注册日期</th>
 {#                                <th>Photos</th>#}
-                                <th>Actions</th>
+                                <th>操作</th>
                             </tr>
                             </thead>
                             {% for user in users %}
@@ -91,37 +91,36 @@
                                             <form class="inline" action="{{ url_for('admin.unlock_user', user_id=user.id) }}"
                                                   method="post">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <input type="submit" onclick="return confirm('Are you sure?');"
-                                                       class="btn btn-secondary btn-sm" value="Unlock">
+                                                <input type="submit" onclick="return confirm('是否确定?');"
+                                                       class="btn btn-secondary btn-sm" value="解锁">
                                             </form>
                                         {% else %}
                                             <form class="inline" action="{{ url_for('admin.lock_user', user_id=user.id) }}"
                                                   method="post">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <input type="submit" onclick="return confirm('Are you sure?');"
-                                                       class="btn btn-warning btn-sm" value="Lock">
+                                                <input type="submit" onclick="return confirm('是否确定?');"
+                                                       class="btn btn-warning btn-sm" value="锁定">
                                             </form>
                                         {% endif %}
                                         {% if user.active %}
                                             <form class="inline" action="{{ url_for('admin.block_user', user_id=user.id) }}"
                                                   method="post">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <input type="submit" onclick="return confirm('Are you sure?');"
-                                                       class="btn btn-warning btn-sm" value="Block">
+                                                <input type="submit" onclick="return confirm('是否确定?');"
+                                                       class="btn btn-warning btn-sm" value="冻结">
                                             </form>
                                         {% else %}
                                             <form class="inline" action="{{ url_for('admin.unblock_user', user_id=user.id) }}"
                                                   method="post">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <input type="submit" onclick="return confirm('Are you sure?');"
-                                                       class="btn btn-secondary btn-sm" value="Unblock">
+                                                <input type="submit" onclick="return confirm('是否确定?');"
+                                                       class="btn btn-secondary btn-sm" value="解冻">
                                             </form>
                                         {% endif %}
                                         <a class="btn btn-light btn-sm" href="mailto:{{ user.email }}">Email</a>
                                         {% if current_user.is_admin %}
                                             <a class="btn btn-warning btn-sm"
-                                               href="{{ url_for('admin.edit_profile_admin', user_id=user.id) }}">Edit
-                                                profile</a>
+                                               href="{{ url_for('admin.edit_profile_admin', user_id=user.id) }}">编辑</a>
                                         {% endif %}
                                     </td>
                                 </tr>

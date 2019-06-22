@@ -54,10 +54,10 @@
                         </div>
                     </div>
                     <div class="ibox-content">
-                        {{ dropzone.create(action='main.upload') }}
-                        <a class="btn btn-light float-right" href="{{ url_for('user.index', username=current_user.username) }}">
-                            Done
-                        </a>
+{#                        {{ dropzone.create(action='main.upload') }}#}
+{#                        <a class="btn btn-light float-right" href="{{ url_for('user.index', username=current_user.username) }}">#}
+{#                            Done#}
+{#                        </a>#}
                     </div>
                 </div>
             </div>
@@ -89,8 +89,8 @@
 {#    {{ super() }}#}
 {#    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>#}
 {#    {{ super() }}#}
-    <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
-    {{ dropzone.config() }}
+{#    <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>#}
+{#    {{ dropzone.config() }}#}
     <script>
         $(document).ready(function() {
             $("#new_experiment").addClass("active");

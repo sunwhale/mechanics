@@ -6,6 +6,7 @@
     :license: MIT, see LICENSE for more details.
 """
 import os
+from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response, jsonify, send_from_directory, session
 from flask_login import login_required, current_user
 
@@ -33,11 +34,12 @@ def new_experiment():
     form = CreateExperimentForm()
     if form.validate_on_submit():
         name = form.name.data
-        author = User.query.get(form.author.data)
+        # author = User.query.get(form.author.data)
+        author = current_user
         exp_type = form.exp_type.data
         material = Material.query.get(form.material.data)
         geometry = Geometry.query.get(form.geometry.data)
-        extensometer = Extensometer.query.get(form.author.data)
+        extensometer = Extensometer.query.get(form.extensometer.data)
         temperature_max = form.temperature_max.data
         temperature_range = form.temperature_range.data
         axial_mode = form.axial_mode.data
@@ -91,13 +93,19 @@ def new_experiment():
 def edit_experiment(experiment_id):
     experiment = Experiment.query.get_or_404(experiment_id)
     form = EditExperimentForm(experiment=experiment)
+    if current_user != experiment.author and not current_user.can('MODERATE'):
+        flash(u'该试验录入人为：' + experiment.author.name + u'，您无法编辑，如需编辑请联系试验录入人或管理员。', 'warning')
+        abort(403)
+    if (datetime.utcnow() - experiment.timestamp).days > 30 or current_user.can('MODERATE'):
+        flash(u'试验创建日期：' + str(experiment.timestamp) + u'，已经超出可编辑时间（30天），请联系管理员。', 'warning')
+        abort(403)
     if form.validate_on_submit():
         experiment.name = form.name.data
-        experiment.author = User.query.get(form.author.data)
+        # experiment.author = User.query.get(form.author.data)
         experiment.exp_type = form.exp_type.data
         experiment.material = Material.query.get(form.material.data)
         experiment.geometry = Geometry.query.get(form.geometry.data)
-        experiment.extensometer = Extensometer.query.get(form.author.data)
+        experiment.extensometer = Extensometer.query.get(form.extensometer.data)
         experiment.temperature_max = form.temperature_max.data
         experiment.temperature_range = form.temperature_range.data
         experiment.axial_mode = form.axial_mode.data
@@ -118,7 +126,7 @@ def edit_experiment(experiment_id):
         return redirect(url_for('data.manage_experiment'))
 
     form.name.data = experiment.name
-    form.author.data = experiment.author_id
+    # form.author.data = experiment.author_id
     form.exp_type.data = experiment.exp_type
     form.material.data = experiment.material_id
     form.geometry.data = experiment.geometry_id
@@ -414,6 +422,7 @@ def delete_material(material_id):
 
 
 @data_bp.route('/data', methods=['GET'])
+@login_required
 def get_data():
     experiments = Experiment.query.all()
     data_list = []
@@ -434,6 +443,7 @@ def get_data():
 
 
 @data_bp.route('/data/user', methods=['GET'])
+@login_required
 def get_data_user():
     user = current_user
     experiments = Experiment.query.with_parent(user)
@@ -455,5 +465,6 @@ def get_data_user():
 
 
 @data_bp.route('/uploads/<path:filename>')
+@login_required
 def get_datafile(filename):
     return send_from_directory(current_app.config['MECHANICS_UPLOAD_PATH'], filename)

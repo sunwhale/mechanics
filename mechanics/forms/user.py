@@ -15,13 +15,13 @@ from mechanics.models import User
 
 
 class EditProfileForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(1, 30)])
-    username = StringField('Username', validators=[DataRequired(), Length(1, 20),
+    name = StringField(u'姓名', validators=[DataRequired(), Length(1, 30)])
+    username = StringField(u'用户名', validators=[DataRequired(), Length(1, 20),
                                                    Regexp('^[a-zA-Z0-9]*$',
                                                           message='The username should contain only a-z, A-Z and 0-9.')])
-    website = StringField('Website', validators=[Optional(), Length(0, 255)])
-    location = StringField('City', validators=[Optional(), Length(0, 50)])
-    bio = TextAreaField('Bio', validators=[Optional(), Length(0, 120)])
+    # website = StringField('Website', validators=[Optional(), Length(0, 255)])
+    # location = StringField('City', validators=[Optional(), Length(0, 50)])
+    # bio = TextAreaField('Bio', validators=[Optional(), Length(0, 120)])
     submit = SubmitField(u'提交')
 
     def validate_username(self, field):

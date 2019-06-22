@@ -17,7 +17,7 @@ from mechanics.models import User, Geometry, Extensometer, Experiment, Material,
 
 class ExperimentForm(FlaskForm):
     name = IntegerField('Name')
-    author = SelectField('Author', coerce=int, default=1)
+    # author = SelectField('Author', coerce=int, default=1)
     exp_type = SelectField('Experiment type', coerce=int, default=1)
     material = SelectField('Material', coerce=int, default=1)
     geometry = SelectField('Geometry', coerce=int, default=1)
@@ -41,8 +41,8 @@ class ExperimentForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(ExperimentForm, self).__init__(*args, **kwargs)
-        self.author.choices = [(author.id, author.name)
-                               for author in User.query.order_by(User.name).all()]
+        # self.author.choices = [(author.id, author.name)
+        #                        for author in User.query.order_by(User.name).all()]
         self.extensometer.choices = [(extensometer.id, extensometer.name)
                                      for extensometer in Extensometer.query.order_by(Extensometer.name).all()]
         self.geometry.choices = [(geometry.id, geometry.name)

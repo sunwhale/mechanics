@@ -153,7 +153,7 @@ def register_commands(app):
     @click.option('--material', default=5, help='Quantity of materials, default is 5.')
     @click.option('--extensometer', default=5, help='Quantity of extensometers, default is 5.')
     @click.option('--geometry', default=5, help='Quantity of geometries, default is 5.')
-    @click.option('--experiment', default=500, help='Quantity of experiments, default is 100.')
+    @click.option('--experiment', default=100, help='Quantity of experiments, default is 100.')
     def forge(user, follow, photo, tag, collect, comment, material, extensometer, geometry, experiment):
         """Generate fake data."""
 

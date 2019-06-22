@@ -47,11 +47,11 @@ def edit_profile_admin(user_id):
         if role.name == 'Locked':
             user.lock()
         user.role = role
-        user.bio = form.bio.data
-        user.website = form.website.data
+        # user.bio = form.bio.data
+        # user.website = form.website.data
         user.confirmed = form.confirmed.data
         user.active = form.active.data
-        user.location = form.location.data
+        # user.location = form.location.data
         user.username = form.username.data
         user.email = form.email.data
         db.session.commit()
@@ -60,9 +60,9 @@ def edit_profile_admin(user_id):
         return redirect(url_for('.manage_user'))
     form.name.data = user.name
     form.role.data = user.role_id
-    form.bio.data = user.bio
-    form.website.data = user.website
-    form.location.data = user.location
+    # form.bio.data = user.bio
+    # form.website.data = user.website
+    # form.location.data = user.location
     form.username.data = user.username
     form.email.data = user.email
     form.confirmed.data = user.confirmed

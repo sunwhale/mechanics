@@ -104,17 +104,17 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.name = form.name.data
         current_user.username = form.username.data
-        current_user.bio = form.bio.data
-        current_user.website = form.website.data
-        current_user.location = form.location.data
+        # current_user.bio = form.bio.data
+        # current_user.website = form.website.data
+        # current_user.location = form.location.data
         db.session.commit()
         flash('Profile updated.', 'success')
         return redirect(url_for('.index', username=current_user.username))
     form.name.data = current_user.name
     form.username.data = current_user.username
-    form.bio.data = current_user.bio
-    form.website.data = current_user.website
-    form.location.data = current_user.location
+    # form.bio.data = current_user.bio
+    # form.website.data = current_user.website
+    # form.location.data = current_user.location
     return render_template('user/settings/edit_profile.html', form=form)
 
 

@@ -22,11 +22,11 @@ fake = Faker()
 
 
 def fake_admin():
-    admin = User(name=u'孙经雨',
-                 username='sunwhale',
-                 email='sunwhale@126.com',
-                 bio=fake.sentence(),
-                 website='http://sunjingyu.com',
+    admin = User(name=u'管理员',
+                 username='admin',
+                 email='admin@admin.com',
+                 # bio=fake.sentence(),
+                 # website='http://sunjingyu.com',
                  confirmed=True,
                  role_id=2)
     admin.set_password('helloflask')
@@ -37,13 +37,28 @@ def fake_admin():
 
 
 def fake_user(count=10):
+    user = User(name=u'孙经雨',
+                confirmed=True,
+                username='sunjingyu',
+                # bio=fake.sentence(),
+                # location=fake.city(),
+                # website=fake.url(),
+                member_since=fake.date_this_decade(),
+                email='sunwhale@126.com')
+    user.set_password('123456')
+    db.session.add(user)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+
     for name in [u'袁荒', u'杨俊杰', u'曾武', u'刘晖', u'杨正茂', u'杨茜茜', u'杨顺', u'庞科技', u'裴长浩', u'郭凯文', u'罗诚', u'张廷连', u'刘钰锦']:
         user = User(name=name,
                     confirmed=True,
                     username=fake.user_name(),
-                    bio=fake.sentence(),
-                    location=fake.city(),
-                    website=fake.url(),
+                    # bio=fake.sentence(),
+                    # location=fake.city(),
+                    # website=fake.url(),
                     member_since=fake.date_this_decade(),
                     email=fake.email())
         user.set_password('123456')
