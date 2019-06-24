@@ -22,6 +22,12 @@ roles_permissions = db.Table('roles_permissions',
                              )
 
 
+groups_experiments = db.Table('groups_experiments',
+                             db.Column('group_id', db.Integer, db.ForeignKey('group.id')),
+                             db.Column('experiment_id', db.Integer, db.ForeignKey('experiment.id'))
+                             )
+
+
 class Permission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
@@ -115,6 +121,10 @@ class User(db.Model, UserMixin):
     notifications = db.relationship('Notification', back_populates='receiver', cascade='all')
     collections = db.relationship('Collect', back_populates='collector', cascade='all')
     experiments = db.relationship('Experiment', back_populates='author', cascade='all')
+    groups = db.relationship('Group', back_populates='author', cascade='all')
+    materials = db.relationship('Material', back_populates='author', cascade='all')
+    extensometers = db.relationship('Extensometer', back_populates='author', cascade='all')
+    geometries = db.relationship('Geometry', back_populates='author', cascade='all')
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',
                                 lazy='dynamic', cascade='all')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
@@ -284,7 +294,11 @@ class Geometry(db.Model):
     D1 = db.Column(db.Float)
     D2 = db.Column(db.Float)
     L = db.Column(db.Float)
+    body = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    author = db.relationship('User', back_populates='geometries')
     experiments = db.relationship('Experiment', back_populates='geometry', cascade='all')
 
     def delete(self):
@@ -299,7 +313,11 @@ class Geometry(db.Model):
 class Material(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
+    body = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    author = db.relationship('User', back_populates='materials')
     experiments = db.relationship('Experiment', back_populates='material', cascade='all')
 
     def delete(self):
@@ -314,7 +332,11 @@ class Material(db.Model):
 class Extensometer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
+    body = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    author = db.relationship('User', back_populates='extensometers')
     experiments = db.relationship('Experiment', back_populates='extensometer', cascade='all')
 
     def delete(self):
@@ -336,6 +358,33 @@ class Datafile(db.Model):
     experiment_id = db.Column(db.Integer, db.ForeignKey('experiment.id'))
 
     experiment = db.relationship('Experiment', back_populates='datafiles', cascade='all')
+
+
+class Photofile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(64), unique=True)
+    description = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    can_edit = db.Column(db.Boolean, default=True)
+    experiment_id = db.Column(db.Integer, db.ForeignKey('experiment.id'))
+
+    experiment = db.relationship('Experiment', back_populates='photofiles', cascade='all')
+
+
+class Group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True)
+    body = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    author = db.relationship('User', back_populates='groups')
+
+    experiments = db.relationship('Experiment', secondary=groups_experiments, back_populates='groups')  # collection
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 class Experiment(db.Model):
@@ -373,6 +422,9 @@ class Experiment(db.Model):
     material = db.relationship('Material', back_populates='experiments')
     extensometer = db.relationship('Extensometer', back_populates='experiments')
     datafiles = db.relationship('Datafile', back_populates='experiment')
+    photofiles = db.relationship('Photofile', back_populates='experiment')
+
+    groups = db.relationship('Group', secondary=groups_experiments, back_populates='experiments')  # collection
 
     def delete(self):
         db.session.delete(self)

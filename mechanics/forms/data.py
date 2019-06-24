@@ -12,7 +12,7 @@ from wtforms import StringField, SubmitField, SelectField, TextAreaField, Valida
     BooleanField, PasswordField, IntegerField, FloatField, MultipleFileField
 from wtforms.validators import DataRequired, Email, Length, Optional, URL, NumberRange, ValidationError
 
-from mechanics.models import User, Geometry, Extensometer, Experiment, Material, Datafile
+from mechanics.models import User, Geometry, Extensometer, Experiment, Material, Datafile, Group
 
 
 class ExperimentForm(FlaskForm):
@@ -76,6 +76,7 @@ class GeometryForm(FlaskForm):
     D1 = FloatField('D1/D/W, mm', default=1)
     D2 = FloatField('D2/B, mm', default=1)
     L = FloatField('L, mm', default=1)
+    body = TextAreaField(u'说明')
     submit = SubmitField(u'提交')
 
     def __init__(self, *args, **kwargs):
@@ -101,6 +102,7 @@ class EditGeometryForm(GeometryForm):
 
 class ExtensometerForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 30)])
+    body = TextAreaField(u'说明')
     submit = SubmitField(u'提交')
 
 
@@ -122,6 +124,7 @@ class EditExtensometerForm(ExtensometerForm):
 
 class MaterialForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 30)])
+    body = TextAreaField(u'说明')
     submit = SubmitField(u'提交')
 
 
@@ -165,3 +168,53 @@ class EditDatafileForm(DatafileForm):
     def validate_name(self, field):
         if field.data != self.datafile.filename and Datafile.query.filter_by(filename=field.data).first():
             raise ValidationError('The filename is already in use.')
+
+
+class PhotofileForm(FlaskForm):
+    filename = FileField(u'上传图片', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'bmp', 'tif', 'gif'])])
+    description = TextAreaField(u'图片说明')
+    submit = SubmitField(u'提交')
+
+
+class CreatePhotofileForm(PhotofileForm):
+    def validate_name(self, field):
+        if Photofile.query.filter_by(filename=field.data).first():
+            raise ValidationError('The filename is already in use.')
+
+
+class EditPhotofileForm(PhotofileForm):
+    def __init__(self, photofile, *args, **kwargs):
+        super(EditPhotofileForm, self).__init__(*args, **kwargs)
+        self.photofile = photofile
+
+    def validate_name(self, field):
+        if field.data != self.photofile.filename and Photofile.query.filter_by(filename=field.data).first():
+            raise ValidationError('The filename is already in use.')
+
+
+class GroupForm(FlaskForm):
+    name = StringField(u'名称', validators=[DataRequired(), Length(1, 30)])
+    body = TextAreaField(u'说明')
+    submit = SubmitField(u'提交')
+
+
+class CreateGroupForm(GroupForm):
+    def validate_name(self, field):
+        if Group.query.filter_by(name=field.data).first():
+            raise ValidationError('The name is already in use.')
+
+
+class EditGroupForm(GroupForm):
+    def __init__(self, group, *args, **kwargs):
+        super(EditGroupForm, self).__init__(*args, **kwargs)
+        self.group = group
+
+    def validate_name(self, field):
+        if field.data != self.group.name and Group.query.filter_by(name=field.data).first():
+            raise ValidationError('The name is already in use.')
+
+
+class GroupExpForm(FlaskForm):
+    expriment_name_add = StringField(u'添加试验')
+    expriment_name_del = StringField(u'删除试验')
+    submit = SubmitField(u'提交')

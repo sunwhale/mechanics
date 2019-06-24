@@ -42,9 +42,12 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th width="25%">编号</th>
-                                <th width="25%">名称</th>
-                                <th width="25%">相关试验</th>
+                                <th width="10%">编号</th>
+                                <th width="10%">名称</th>
+                                <th width="10%">作者</th>
+                                <th width="10%">创建时间</th>
+                                <th >说明</th>
+                                <th width="10%">试验</th>
                                 <th width="25%">操作</th>
                             </tr>
                             </thead>
@@ -52,28 +55,35 @@
                                 <tr>
                                     <td>{{ loop.index }}</td>
                                     <td>{{ material.name }}</td>
+                                    <td>{{ material.author.name }}</td>
+                                    <td>{{ material.timestamp.year }}/{{ material.timestamp.month }}/{{ material.timestamp.day }}</td>
+                                    <td>{{ material.body }}</td>
                                     <td>{{ material.experiments|length }}</td>
                                     <td>
-                                        {% if material.id == 1 %}
-                                            <a class="btn btn-info btn-sm" disabled="disabled" href="#">编辑</a>
+                                    <a class="btn btn-info btn-sm" href="{{ url_for('.edit_material', material_id=material.id) }}">查看</a>
 
-                                            <form class="inline" method="post">
-                                                <button type="submit" class="btn btn-danger btn-sm" disabled="disabled">删除
-                                                </button>
-                                            </form>
+                                        {% if material.id == 1 %}
+
                                         {% endif %}
 
                                         {% if material.id != 1 %}
-                                            <a class="btn btn-info btn-sm"
-                                               href="{{ url_for('.edit_material', material_id=material.id) }}">编辑</a>
+                                            {% if current_user.can('MODERATE') %}
+                                                <a class="btn btn-info btn-sm"
+                                                   href="{{ url_for('.edit_material', material_id=material.id) }}">编辑</a>
 
-                                            <form class="inline" method="post"
-                                                  action="{{ url_for('.delete_material', material_id=material.id) }}">
-                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                                <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Are you sure?');">删除
-                                                </button>
-                                            </form>
+                                                <form class="inline" method="post"
+                                                      action="{{ url_for('.delete_material', material_id=material.id) }}">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('Are you sure?');">删除
+                                                    </button>
+                                                </form>
+                                            {% elif material.author == current_user %}
+                                                <a class="btn btn-info btn-sm"
+                                                   href="{{ url_for('.edit_material', material_id=material.id) }}">编辑</a>
+                                            {% else %}
+
+                                            {% endif %}
                                         {% endif %}
                                     </td>
                                 </tr>
