@@ -21,6 +21,7 @@ from mechanics.blueprints.data import data_bp
 from mechanics.extensions import bootstrap, db, login_manager, mail, dropzone, moment, whooshee, avatars, csrf
 from mechanics.models import Role, User, Photo, Tag, Follow, Notification, Comment, Collect, Permission, Geometry, Extensometer, Material
 from mechanics.settings import config
+# from mechanics.python import test
 
 
 def create_app(config_name=None):
@@ -83,7 +84,8 @@ def register_template_context(app):
         axial_mode_list = ['displacement, mm', 'axial strain, mm/mm', 'force, kN', 'other']
         torsional_mode_list = ['rotation, deg', 'angle strain, deg', 'torque, N*m', 'other']
         exp_type_list = ['Fatigue', 'Fracture', 'Monotonic', 'other']
-        datafile_type_list = [u'第一周（时域）', u'半寿命周（时域）', u'单调拉伸', u'峰谷值', u'其他']
+        datafile_type_list = [u'第一周（时域）', u'半寿命周（时域）', u'全时域', u'峰谷值', u'其他']
+        geometry_type_list = [u'#1 空心圆管 Tubular', u'#2 实心圆棒 Round', u'#3 板材 Plate']
         return dict(notification_count=notification_count,
                     geometries=geometries,
                     extensometers=extensometers,
@@ -91,7 +93,8 @@ def register_template_context(app):
                     axial_mode_list=axial_mode_list,
                     torsional_mode_list=torsional_mode_list,
                     exp_type_list=exp_type_list,
-                    datafile_type_list=datafile_type_list)
+                    datafile_type_list=datafile_type_list,
+                    geometry_type_list=geometry_type_list)
 
 
 def register_errorhandlers(app):
@@ -187,3 +190,9 @@ def register_commands(app):
         click.echo('Generating %d experiments...' % experiment)
         fake_experiment(experiment)
         click.echo('Done.')
+
+    # @app.cli.command()
+    # def test_run():
+    #     test()
+    #     click.echo('Done.')
+

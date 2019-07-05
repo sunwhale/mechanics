@@ -37,6 +37,8 @@ class BaseConfig:
     MECHANICS_SEARCH_RESULT_PER_PAGE = 20
     MECHANICS_MAIL_SUBJECT_PREFIX = '[Mechanics]'
     MECHANICS_UPLOAD_PATH = os.path.join(basedir, 'uploads')
+    MECHANICS_DATAFILE_PATH = os.path.join(MECHANICS_UPLOAD_PATH, 'data')
+    MECHANICS_PLOT_PATH = os.path.join(MECHANICS_UPLOAD_PATH, 'plot')
     MECHANICS_PHOTO_SIZE = {'small': 400,
                          'medium': 800}
     MECHANICS_PHOTO_SUFFIX = {
@@ -45,7 +47,7 @@ class BaseConfig:
     }
 
     SECRET_KEY = os.getenv('SECRET_KEY', 'secret string')
-    MAX_CONTENT_LENGTH = 3 * 1024 * 1024  # file size exceed to 3 Mb will return a 413 error response.
+    MAX_CONTENT_LENGTH = 1024 * 1024 * 1024  # file size exceed to 3 Mb will return a 413 error response.
 
     BOOTSTRAP_SERVE_LOCAL = True
 

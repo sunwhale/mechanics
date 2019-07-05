@@ -290,7 +290,7 @@ class Notification(db.Model):
 class Geometry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
-    axial_mode = db.Column(db.Integer)
+    geometry_type = db.Column(db.Integer)
     D1 = db.Column(db.Float)
     D2 = db.Column(db.Float)
     L = db.Column(db.Float)
@@ -332,6 +332,7 @@ class Material(db.Model):
 class Extensometer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
+    gauge_length = db.Column(db.Float)
     body = db.Column(db.String(500))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -351,6 +352,7 @@ class Extensometer(db.Model):
 class Datafile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(64), unique=True)
+    size = db.Column(db.Float)
     description = db.Column(db.String(500))
     datafile_type = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
@@ -363,6 +365,7 @@ class Datafile(db.Model):
 class Photofile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(64), unique=True)
+    size = db.Column(db.Float)
     description = db.Column(db.String(500))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     can_edit = db.Column(db.Boolean, default=True)
@@ -454,6 +457,6 @@ def delete_photos(**kwargs):
 def delete_datafiles(**kwargs):
     target = kwargs['target']
     for filename in [target.filename]:
-        path = os.path.join(current_app.config['MECHANICS_UPLOAD_PATH'], filename)
+        path = os.path.join(current_app.config['MECHANICS_DATAFILE_PATH'], filename)
         if os.path.exists(path):  # not every filename map a unique file
             os.remove(path)

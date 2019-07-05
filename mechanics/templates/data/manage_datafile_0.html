@@ -33,12 +33,7 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <span class="float-right">
-                        <a class="btn btn-primary btn-sm" href="{{ url_for('.new_extensometer') }}">新建引伸计
-                        </a>
-                    </span>
-
-                    {% if extensometers %}
+                    {% if datafiles %}
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -51,36 +46,36 @@
                                 <th width="25%">操作</th>
                             </tr>
                             </thead>
-                            {% for extensometer in extensometers %}
+                            {% for datafile in datafiles %}
                                 <tr>
                                     <td>{{ loop.index }}</td>
-                                    <td>{{ extensometer.name }}</td>
-                                    <td>{{ extensometer.author.name }}</td>
-                                    <td>{{ extensometer.timestamp.year }}/{{ extensometer.timestamp.month }}/{{ extensometer.timestamp.day }}</td>
-                                    <td>{{ extensometer.body }}</td>
-                                    <td>{{ extensometer.experiments|length }}</td>
+                                    <td>{{ datafile.name }}</td>
+                                    <td>{{ datafile.experiment.name }}</td>
+                                    <td>{{ datafile.timestamp.year }}/{{ datafile.timestamp.month }}/{{ datafile.timestamp.day }}</td>
+                                    <td>{{ datafile.description }}</td>
+                                    <td>{{ datafile.experiments|length }}</td>
                                     <td>
-                                    <a class="btn btn-info btn-sm" href="{{ url_for('.view_extensometer', extensometer_id=extensometer.id) }}">查看</a>
+                                    <a class="btn btn-info btn-sm" href="{{ url_for('.datafile_experiment', experiment_id=datafile.experiment_id) }}">查看</a>
 
-                                        {% if extensometer.id == 1 %}
+                                        {% if datafile.id == 1 %}
 
                                         {% endif %}
 
-                                        {% if extensometer.id != 1 %}
+                                        {% if datafile.id != 1 %}
                                             {% if current_user.can('MODERATE') %}
-                                                <a class="btn btn-info btn-sm"
-                                                   href="{{ url_for('.edit_extensometer', extensometer_id=extensometer.id) }}">编辑</a>
+{#                                                <a class="btn btn-info btn-sm"#}
+{#                                                   href="{{ url_for('.edit_datafile', datafile_id=datafile.id) }}">编辑</a>#}
 
                                                 <form class="inline" method="post"
-                                                      action="{{ url_for('.delete_extensometer', extensometer_id=extensometer.id) }}">
+                                                      action="{{ url_for('.delete_datafile', datafile_id=datafile.id) }}">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                                     <button type="submit" class="btn btn-danger btn-sm"
                                                             onclick="return confirm('Are you sure?');">删除
                                                     </button>
                                                 </form>
-                                            {% elif extensometer.author == current_user %}
-                                                <a class="btn btn-info btn-sm"
-                                                   href="{{ url_for('.edit_extensometer', extensometer_id=extensometer.id) }}">编辑</a>
+                                            {% elif datafile.author == current_user %}
+{#                                                <a class="btn btn-info btn-sm"#}
+{#                                                   href="{{ url_for('.edit_datafile', datafile_id=datafile.id) }}">编辑</a>#}
                                             {% else %}
 
                                             {% endif %}
@@ -91,7 +86,7 @@
                         </table>
                         <p class="text-muted">提示：删除引伸计不会删除相关的试验，相关联的试验将会移动到默认引伸计。</p>
                     {% else %}
-                        <div class="tip"><h5>No extensometers.</h5></div>
+                        <div class="tip"><h5>No datafiles.</h5></div>
                     {% endif %}
                 </div>
             </div>
@@ -125,7 +120,7 @@
 {#    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>#}
     <script>
         $(document).ready(function() {
-            $("#manage_extensometer").addClass("active");
+            $("#manage_datafile").addClass("active");
         } );
     </script>
 {% endblock script %}

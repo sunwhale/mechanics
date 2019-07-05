@@ -7,19 +7,23 @@
 """
 import os
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response, jsonify, send_from_directory, session
+from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response, \
+    jsonify, send_from_directory, session
 from flask_login import login_required, current_user
 
 # from mechanics.emails import send_new_comment_email, send_new_reply_email
 from mechanics.extensions import db
 from mechanics.decorators import admin_required, permission_required
 from mechanics.forms.data import ExperimentForm, CreateGeometryForm, EditGeometryForm, CreateExtensometerForm, \
-    EditExtensometerForm, CreateExperimentForm, EditExperimentForm, EditMaterialForm, CreateMaterialForm, EditMaterialForm, \
+    EditExtensometerForm, CreateExperimentForm, EditExperimentForm, EditMaterialForm, CreateMaterialForm, \
+    EditMaterialForm, \
     CreateDatafileForm, EditDatafileForm, DatafileForm, CreatePhotofileForm, EditPhotofileForm, PhotofileForm, \
     CreateGroupForm, EditGroupForm, GroupForm, GroupExpForm
 from mechanics.models import Experiment, Geometry, User, Extensometer, Material, Datafile, Photofile, Group
 from mechanics.utils import redirect_back
 
+from mechanics.python.plot_data_template import create_plot_data, plot
+from mechanics.python.verification import verification
 
 data_bp = Blueprint('data', __name__)
 
@@ -56,6 +60,7 @@ def new_experiment():
         life = form.life.data
         frequency = form.frequency.data
         period = form.period.data
+        timestamp = form.date.timestamp
         body = form.body.data
 
         experiment = Experiment(name=name,
@@ -78,6 +83,7 @@ def new_experiment():
                                 life=life,
                                 frequency=frequency,
                                 period=period,
+                                timestamp=timestamp,
                                 body=body)
 
         # same with:
@@ -122,6 +128,7 @@ def edit_experiment(experiment_id):
         experiment.life = form.life.data
         experiment.frequency = form.frequency.data
         experiment.period = form.period.data
+        experiment.timestamp = form.timestamp.data
         experiment.body = form.body.data
         db.session.commit()
         flash('Post updated.', 'success')
@@ -147,6 +154,7 @@ def edit_experiment(experiment_id):
     form.life.data = experiment.life
     form.frequency.data = experiment.frequency
     form.period.data = experiment.period
+    form.timestamp.data = experiment.timestamp
     form.body.data = experiment.body
     return render_template('data/edit_experiment.html', form=form)
 
@@ -165,7 +173,10 @@ def delete_experiment(experiment_id):
 @login_required
 def view_experiment(experiment_id):
     experiment = Experiment.query.get_or_404(experiment_id)
-    return render_template('data/view_experiment.html', experiment=experiment)
+    photofiles = Photofile.query.with_parent(experiment).order_by(Photofile.filename.asc()).all()
+    datafiles = Datafile.query.with_parent(experiment).order_by(Datafile.filename.asc()).all()
+    return render_template('data/view_experiment.html', experiment=experiment, photofiles=photofiles,
+                           datafiles=datafiles)
 
 
 @data_bp.route('/experiment/<int:experiment_id>/datafile', methods=['GET', 'POST'])
@@ -186,7 +197,7 @@ def datafile_experiment(experiment_id):
     for d in datafiles:
         if d.datafile_type == 5:
             count += 1
-            maximum = max(maximum,int(d.filename.split('_')[2]))
+            maximum = max(maximum, int(d.filename.split('_')[2]))
 
     max_count = max(count, maximum) + 1
 
@@ -206,18 +217,32 @@ def datafile_experiment(experiment_id):
                 flash(filename + u'文件已经存在，清删除相关文件再次上传。', 'danger')
                 return redirect(url_for('data.datafile_experiment', experiment_id=experiment_id))
 
+        file_abspath = os.path.join(current_app.config['MECHANICS_DATAFILE_PATH'], filename)
+        f.save(file_abspath)
+        size = os.path.getsize(file_abspath)
+
         datafile = Datafile(description=description,
                             filename=filename,
+                            size=size,
                             datafile_type=datafile_type,
                             experiment_id=experiment_id)
 
-        f.save(os.path.join(current_app.config['MECHANICS_UPLOAD_PATH'], filename))
-        # session['filenames'] = [filename]
-        flash(u'本地文件' + f.filename + u'上传成功，上传后文件命名为' + filename + u'。', 'success')
-        db.session.add(datafile)
-        db.session.commit()
-        return redirect(url_for('data.datafile_experiment', experiment_id=experiment_id, datafiles=datafiles, author=author))
-    return render_template('data/datafile_experiment.html', experiment=experiment, datafiles=datafiles, form=form, author=author)
+        if verification(file_abspath):
+            flash(u'本地文件' + f.filename + u'上传成功，上传后文件命名为' + filename + u'。', 'success')
+            db.session.add(datafile)
+            db.session.commit()
+            figure_name = filename.split('.')[0] + 'fig'
+            figure_path = current_app.config['MECHANICS_PLOT_PATH']
+            create_plot_data(figure_path, figure_name, file_abspath)
+            plot(figure_path, figure_name, ['.jpg'])
+        else:
+            flash(u'本地文件' + f.filename + u'格式不符合要求，上传失敗', 'danger')
+            os.remove(file_abspath)
+
+        return redirect(
+            url_for('data.datafile_experiment', experiment_id=experiment_id, datafiles=datafiles, author=author))
+    return render_template('data/datafile_experiment.html', experiment=experiment, datafiles=datafiles, form=form,
+                           author=author)
 
 
 # @data_bp.route('/datafile/<int:datafile_id>/edit', methods=['GET', 'POST'])
@@ -254,6 +279,21 @@ def datafile_experiment(experiment_id):
 #     return render_template('data/datafile_experiment.html', experiment=experiment, datafiles=datafiles, form=form)
 
 
+@data_bp.route('/datafile/manage')
+@login_required
+def manage_datafile():
+    datafiles = Datafile.query.order_by(Datafile.id).all()
+    return render_template('data/manage_datafile.html', datafiles=datafiles)
+
+
+@data_bp.route('/datafile/<int:datafile_id>/download')
+@login_required
+def download_datafile(datafile_id):
+    datafile = Datafile.query.get_or_404(datafile_id)
+    filename = datafile.filename
+    return redirect(url_for('data.get_datafile', filename=filename))
+
+
 @data_bp.route('/datafile/<int:datafile_id>/delete', methods=['POST'])
 @login_required
 def delete_datafile(datafile_id):
@@ -285,7 +325,7 @@ def photofile_experiment(experiment_id):
     maximum = 0
     for d in photofiles:
         count += 1
-        maximum = max(maximum,int(d.filename.split('_')[1]))
+        maximum = max(maximum, int(d.filename.split('_')[1]))
 
     max_count = max(count, maximum) + 1
 
@@ -303,16 +343,18 @@ def photofile_experiment(experiment_id):
                 return redirect(url_for('data.photofile_experiment', experiment_id=experiment_id))
 
         photofile = Photofile(description=description,
-                            filename=filename,
-                            experiment_id=experiment_id)
+                              filename=filename,
+                              experiment_id=experiment_id)
 
-        f.save(os.path.join(current_app.config['MECHANICS_UPLOAD_PATH'], filename))
+        f.save(os.path.join(current_app.config['MECHANICS_DATAFILE_PATH'], filename))
         # session['filenames'] = [filename]
         flash(u'本地图片' + f.filename + u'上传成功，上传后图片命名为' + filename + u'。', 'success')
         db.session.add(photofile)
         db.session.commit()
-        return redirect(url_for('data.photofile_experiment', experiment_id=experiment_id, photofiles=photofiles, author=author))
-    return render_template('data/photofile_experiment.html', experiment=experiment, photofiles=photofiles, form=form, author=author)
+        return redirect(
+            url_for('data.photofile_experiment', experiment_id=experiment_id, photofiles=photofiles, author=author))
+    return render_template('data/photofile_experiment.html', experiment=experiment, photofiles=photofiles, form=form,
+                           author=author)
 
 
 @data_bp.route('/photofile/<int:photofile_id>/delete', methods=['POST'])
@@ -347,14 +389,14 @@ def new_geometry():
     form = CreateGeometryForm()
     if form.validate_on_submit():
         name = form.name.data
-        axial_mode = form.axial_mode.data
+        geometry_type = form.geometry_type.data
         D1 = form.D1.data
         D2 = form.D2.data
         L = form.L.data
         body = form.body.data
         author = current_user
         geometry = Geometry(name=name,
-                            axial_mode=axial_mode,
+                            geometry_type=geometry_type,
                             D1=D1,
                             D2=D2,
                             L=L,
@@ -377,7 +419,7 @@ def edit_geometry(geometry_id):
         return redirect(url_for('.manage_geometry'))
     if form.validate_on_submit():
         geometry.name = form.name.data
-        geometry.axial_mode = form.axial_mode.data
+        geometry.geometry_type = form.geometry_type.data
         geometry.D1 = form.D1.data
         geometry.D2 = form.D2.data
         geometry.L = form.L.data
@@ -386,12 +428,19 @@ def edit_geometry(geometry_id):
         flash('Geometry updated.', 'success')
         return redirect(url_for('.manage_geometry'))
     form.name.data = geometry.name
-    form.axial_mode.data = geometry.axial_mode
+    form.geometry_type.data = geometry.geometry_type
     form.D1.data = geometry.D1
     form.D2.data = geometry.D2
     form.L.data = geometry.L
     form.body.data = geometry.body
     return render_template('data/edit_geometry.html', form=form)
+
+
+@data_bp.route('/geometry/<int:geometry_id>/view', methods=['GET'])
+@login_required
+def view_geometry(geometry_id):
+    geometry = Geometry.query.get_or_404(geometry_id)
+    return render_template('data/view_geometry.html', geometry=geometry)
 
 
 @data_bp.route('/geometry/<int:geometry_id>/delete', methods=['POST'])
@@ -442,6 +491,13 @@ def edit_extensometer(extensometer_id):
         return redirect(url_for('.manage_extensometer'))
     form.name.data = extensometer.name
     return render_template('data/edit_extensometer.html', form=form)
+
+
+@data_bp.route('/extensometer/<int:extensometer_id>/view', methods=['GET'])
+@login_required
+def view_extensometer(extensometer_id):
+    extensometer = Extensometer.query.get_or_404(extensometer_id)
+    return render_template('data/view_extensometer.html', extensometer=extensometer)
 
 
 @data_bp.route('/extensometer/<int:extensometer_id>/delete', methods=['POST'])
@@ -594,17 +650,17 @@ def get_data():
     data_list = []
     exp_type_list = ['Fatigue', 'Fracture', 'Monotonic', 'other']
     for experiment in experiments:
-        data_list.append({ "1": experiment.name,
-                           "2": experiment.author.name,
-                           "3": experiment.material.name,
-                           "4": exp_type_list[experiment.exp_type-1],
-                           "5": str(experiment.timestamp),
-                           "6": experiment.id })
+        data_list.append({"1": str(experiment.name),
+                          "2": experiment.author.name,
+                          "3": experiment.material.name,
+                          "4": exp_type_list[experiment.exp_type - 1],
+                          "5": str(experiment.timestamp.date()),
+                          "6": experiment.id})
 
     data = {
         "data": data_list
     }
-    print data
+    # print data
     return jsonify(data)
 
 
@@ -616,17 +672,17 @@ def get_data_user():
     data_list = []
     exp_type_list = ['Fatigue', 'Fracture', 'Monotonic', 'other']
     for experiment in experiments:
-        data_list.append({ "1": experiment.name,
-                           "2": experiment.author.name,
-                           "3": experiment.material.name,
-                           "4": exp_type_list[experiment.exp_type-1],
-                           "5": str(experiment.timestamp),
-                           "6": experiment.id })
+        data_list.append({"1": experiment.name,
+                          "2": experiment.author.name,
+                          "3": experiment.material.name,
+                          "4": exp_type_list[experiment.exp_type - 1],
+                          "5": str(experiment.timestamp.date()),
+                          "6": experiment.id})
 
     data = {
         "data": data_list
     }
-    print data
+    # print data
     return jsonify(data)
 
 
@@ -639,12 +695,33 @@ def get_data_group(group_id):
     data_list = []
     exp_type_list = ['Fatigue', 'Fracture', 'Monotonic', 'other']
     for experiment in experiments:
-        data_list.append({ "1": experiment.name,
-                           "2": experiment.author.name,
-                           "3": experiment.material.name,
-                           "4": exp_type_list[experiment.exp_type-1],
-                           "5": str(experiment.timestamp),
-                           "6": experiment.id })
+        data_list.append({"1": experiment.name,
+                          "2": experiment.author.name,
+                          "3": experiment.material.name,
+                          "4": exp_type_list[experiment.exp_type - 1],
+                          "5": str(experiment.timestamp.date()),
+                          "6": experiment.id})
+
+    data = {
+        "data": data_list
+    }
+    # print data
+    return jsonify(data)
+
+
+@data_bp.route('/datafile', methods=['GET'])
+@login_required
+def get_data_datafile():
+    datafiles = Datafile.query.order_by(Datafile.experiment_id).all()
+    data_list = []
+    datafile_type_list = [u'第一周（时域）', u'半寿命周（时域）', u'全时域', u'峰谷值', u'其他']
+    for datafile in datafiles:
+        data_list.append({"1": str(datafile.filename),
+                          "2": str(datafile.experiment.name),
+                          "3": str(round(datafile.size / 1024, 2)) + 'KB',
+                          "4": datafile_type_list[datafile.datafile_type - 1],
+                          "5": str(datafile.timestamp.date()),
+                          "6": [datafile.experiment_id, datafile.id]})
 
     data = {
         "data": data_list
@@ -655,5 +732,11 @@ def get_data_group(group_id):
 
 @data_bp.route('/uploads/<path:filename>')
 @login_required
-def get_datafile(filename):
+def get_uploadfile(filename):
     return send_from_directory(current_app.config['MECHANICS_UPLOAD_PATH'], filename)
+
+
+@data_bp.route('/uploads/datafile/<path:filename>')
+@login_required
+def get_datafile(filename):
+    return send_from_directory(current_app.config['MECHANICS_DATAFILE_PATH'], filename)

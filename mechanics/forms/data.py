@@ -9,7 +9,7 @@ from flask_ckeditor import CKEditorField
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, ValidationError, HiddenField, \
-    BooleanField, PasswordField, IntegerField, FloatField, MultipleFileField
+    BooleanField, PasswordField, IntegerField, FloatField, MultipleFileField, DateField
 from wtforms.validators import DataRequired, Email, Length, Optional, URL, NumberRange, ValidationError
 
 from mechanics.models import User, Geometry, Extensometer, Experiment, Material, Datafile, Group
@@ -36,6 +36,7 @@ class ExperimentForm(FlaskForm):
     life = IntegerField('Lifetime, cycle', default=1)
     frequency = FloatField('Frequency, Hz', default=1)
     period = FloatField('Period, s', default=1)
+    timestamp = DateField('Date', default='', validators=[DataRequired()], format='%Y/%m/%d', render_kw={'placeholder':'Year/Month/Day'})
     body = CKEditorField('Comments')
     submit = SubmitField(u'提交')
 
@@ -72,7 +73,7 @@ class EditExperimentForm(ExperimentForm):
 
 class GeometryForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 30)])
-    axial_mode = SelectField('Axial mode', coerce=int, default=1)
+    geometry_type = SelectField('Axial mode', coerce=int, default=1)
     D1 = FloatField('D1/D/W, mm', default=1)
     D2 = FloatField('D2/B, mm', default=1)
     L = FloatField('L, mm', default=1)
@@ -81,7 +82,7 @@ class GeometryForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(GeometryForm, self).__init__(*args, **kwargs)
-        self.axial_mode.choices = [(1, u'#1 空心圆管 Tubular'), (2, u'#2 实心圆棒 Round'), (3, u'#3 板材 Plate')]
+        self.geometry_type.choices = [(1, u'#1 空心圆管 Tubular'), (2, u'#2 实心圆棒 Round'), (3, u'#3 板材 Plate')]
 
 
 class CreateGeometryForm(GeometryForm):
@@ -151,7 +152,7 @@ class DatafileForm(FlaskForm):
     submit = SubmitField(u'提交')
     def __init__(self, *args, **kwargs):
         super(DatafileForm, self).__init__(*args, **kwargs)
-        self.datafile_type.choices = [(1, u'第一周（时域）'), (2, u'半寿命周（时域）'), (3, u'单调拉伸'), (4, u'峰谷值'), (5, u'其他') ]
+        self.datafile_type.choices = [(1, u'第一周（时域）'), (2, u'半寿命周（时域）'), (3, u'全时域'), (4, u'峰谷值'), (5, u'其他') ]
 
 
 class CreateDatafileForm(DatafileForm):

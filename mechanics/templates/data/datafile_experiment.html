@@ -22,124 +22,7 @@
 {% block content %}
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-lg-6">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>#{{ experiment.name }}号试验-试验详情</h5>
-                        <div class="ibox-tools">
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
-                            </a>
-                            <a class="close-link">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>试验编号</th>
-                                <th>{{ experiment.name }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr> <td width="50%"> 试验人 </td>    <td> {{ experiment.author.name }}</td> </tr>
-                                <tr> <td> 试验类型 </td>    <td> {{ exp_type_list[experiment.exp_type-1] }}</td> </tr>
-                                <tr> <td> 材料 </td>    <td> {{ experiment.material.name }}</td> </tr>
-                                <tr> <td> 几何形状 </td>    <td> {{ experiment.geometry.name }}</td> </tr>
-                                <tr> <td> 引伸计 </td>    <td> {{ experiment.extensometer.name }}</td> </tr>
-                                <tr> <td> 最高温度 </td>    <td> {{ experiment.temperature_max }}</td> </tr>
-                                <tr> <td> 温度范围 </td>    <td> {{ experiment.temperature_range }}</td> </tr>
-                                <tr> <td> 轴向控制通道 </td>    <td> {{ axial_mode_list[experiment.axial_mode-1] }}</td> </tr>
-                                <tr> <td> 轴向载荷比 </td>    <td> {{ experiment.axial_ratio }}</td> </tr>
-                                <tr> <td> 轴向载荷幅 </td>    <td> {{ experiment.axial_amplitude }}</td> </tr>
-                                <tr> <td> 扭转控制通道 </td>    <td> {{ torsional_mode_list[experiment.torsional_mode-1] }}</td> </tr>
-                                <tr> <td> 扭转载荷比 </td>    <td> {{ experiment.torsional_ratio }}</td> </tr>
-                                <tr> <td> 扭转载荷幅值 </td>    <td> {{ experiment.torsional_amplitude }}</td> </tr>
-                                <tr> <td> 轴向扭转相位角 </td>    <td> {{ experiment.axial_torsional_phase }}</td> </tr>
-                                <tr> <td> 轴向温度相位角 </td>    <td> {{ experiment.axial_temperature_phase }}</td> </tr>
-                                <tr> <td> 内部冷气流量 </td>    <td> {{ experiment.internal_cooling_air }}</td> </tr>
-                                <tr> <td> 寿命 </td>    <td> {{ experiment.life }}</td> </tr>
-                                <tr> <td> 试验频率 </td>    <td> {{ experiment.frequency }}</td> </tr>
-                                <tr> <td> 试验周期 </td>    <td> {{ experiment.period }}</td> </tr>
-                                <tr> <td> 说明 </td>    <td> {{ experiment.body }}</td> </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>#{{ experiment.name }}号试验-相关文件</h5>
-                        <div class="ibox-tools">
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
-                            </a>
-                            <a class="close-link">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                        {% if datafiles %}
-                            <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>文件名</th>
-                                <th width="20%">数据类型</th>
-                                <th width="15%">上传日期</th>
-                                <th width="20%">文件说明</th>
-                                <th width="20%">操作</th>
-                            </tr>
-                            </thead>
-                            {% for datafile in datafiles %}
-                                <tr>
-                                    <td>
-                                        <a class="card-thumbnail" href="{{ url_for('data.get_datafile', filename=datafile.filename) }}">
-                                            {{ datafile.filename }}
-                                        </a>
-                                    </td>
-                                    <td>{{ datafile_type_list[datafile.datafile_type-1] }}</td>
-                                    <td>{{ datafile.timestamp.year }}/{{ datafile.timestamp.month }}/{{ datafile.timestamp.day }}</td>
-                                    <td>{{ datafile.description }}</td>
-                                    <td>
-                                        {% if author == current_user or current_user.can('MODERATE') %}
-                                            <a class="btn btn-info btn-sm"
-                                               href="#">编辑</a>
-                                            <form class="inline" method="post"
-                                                  action="{{ url_for('.delete_datafile', datafile_id=datafile.id) }}">
-                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                                <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('是否确定删除文件？');">删除
-                                                </button>
-                                            </form>
-                                        {% else %}
-                                            <a class="btn btn-info btn-sm" disabled="disabled" href="#">编辑</a>
-                                            <form class="inline" method="post">
-                                                <button type="submit" class="btn btn-danger btn-sm" disabled="disabled">删除
-                                                </button>
-                                            </form>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-
-{#                            {% for datafile in datafiles %}#}
-{#                                {{ datafile_card(datafile, datafile_type_list) }}#}
-{#                            {% endfor %}#}
-                        {% else %}
-                            <div class="tip text-center">
-                                没有数据文件，请上传。
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
+            <div class="col-lg-3">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>#{{ experiment.name }}号试验-文件上传</h5>
@@ -191,6 +74,125 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-9">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>#{{ experiment.name }}号试验-相关文件</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        {% if datafiles %}
+                            <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>文件名</th>
+                                <th width="20%">数据类型</th>
+                                <th width="20%">上传日期</th>
+                                <th width="20%">文件说明</th>
+                                <th width="20%">操作</th>
+                            </tr>
+                            </thead>
+                            {% for datafile in datafiles %}
+                                <tr>
+                                    <td>
+                                        <a class="card-thumbnail" href="{{ url_for('data.get_datafile', filename=datafile.filename) }}">
+                                            {{ datafile.filename }}
+                                        </a>
+                                    </td>
+                                    <td>{{ datafile_type_list[datafile.datafile_type-1] }}</td>
+                                    <td>{{ datafile.timestamp.year }}/{{ datafile.timestamp.month }}/{{ datafile.timestamp.day }}</td>
+                                    <td>{{ datafile.description }}</td>
+                                    <td>
+                                        {% if author == current_user or current_user.can('MODERATE') %}
+                                            <a class="btn btn-info btn-sm"
+                                               href="#">编辑</a>
+                                            <form class="inline" method="post"
+                                                  action="{{ url_for('.delete_datafile', datafile_id=datafile.id) }}">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('是否确定删除文件？');">删除
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <a class="btn btn-info btn-sm" disabled="disabled" href="#">编辑</a>
+                                            <form class="inline" method="post">
+                                                <button type="submit" class="btn btn-danger btn-sm" disabled="disabled">删除
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+
+{#                            {% for datafile in datafiles %}#}
+{#                                {{ datafile_card(datafile, datafile_type_list) }}#}
+{#                            {% endfor %}#}
+                        {% else %}
+                            <div class="tip text-center">
+                                没有数据文件，请上传。
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-9">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>#{{ experiment.name }}号试验-试验详情</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>试验编号</th>
+                                <th>{{ experiment.name }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr> <td width="50%"> 试验人 </td>    <td> {{ experiment.author.name }}</td> </tr>
+                                <tr> <td> 试验类型 </td>    <td> {{ exp_type_list[experiment.exp_type-1] }}</td> </tr>
+                                <tr> <td> 材料 </td>    <td> {{ experiment.material.name }}</td> </tr>
+                                <tr> <td> 几何形状 </td>    <td> {{ experiment.geometry.name }}</td> </tr>
+                                <tr> <td> 引伸计 </td>    <td> {{ experiment.extensometer.name }}</td> </tr>
+                                <tr> <td> 最高温度 </td>    <td> {{ experiment.temperature_max }}</td> </tr>
+                                <tr> <td> 温度范围 </td>    <td> {{ experiment.temperature_range }}</td> </tr>
+                                <tr> <td> 轴向控制通道 </td>    <td> {{ axial_mode_list[experiment.axial_mode-1] }}</td> </tr>
+                                <tr> <td> 轴向载荷比 </td>    <td> {{ experiment.axial_ratio }}</td> </tr>
+                                <tr> <td> 轴向载荷幅 </td>    <td> {{ experiment.axial_amplitude }}</td> </tr>
+                                <tr> <td> 扭转控制通道 </td>    <td> {{ torsional_mode_list[experiment.torsional_mode-1] }}</td> </tr>
+                                <tr> <td> 扭转载荷比 </td>    <td> {{ experiment.torsional_ratio }}</td> </tr>
+                                <tr> <td> 扭转载荷幅值 </td>    <td> {{ experiment.torsional_amplitude }}</td> </tr>
+                                <tr> <td> 轴向扭转相位角 </td>    <td> {{ experiment.axial_torsional_phase }}</td> </tr>
+                                <tr> <td> 轴向温度相位角 </td>    <td> {{ experiment.axial_temperature_phase }}</td> </tr>
+                                <tr> <td> 内部冷气流量 </td>    <td> {{ experiment.internal_cooling_air }}</td> </tr>
+                                <tr> <td> 寿命 </td>    <td> {{ experiment.life }}</td> </tr>
+                                <tr> <td> 试验频率 </td>    <td> {{ experiment.frequency }}</td> </tr>
+                                <tr> <td> 试验周期 </td>    <td> {{ experiment.period }}</td> </tr>
+                                <tr> <td> 说明 </td>    <td> {{ experiment.body }}</td> </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 {% endblock content %}
