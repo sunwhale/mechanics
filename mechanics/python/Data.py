@@ -139,6 +139,15 @@ class ExperimentData:
         else:
             return []
 
+    def obtain_item(self, item):
+        """
+        截取指定数组的第begin_cycle到end_cycle循环中的数据。
+        """
+        if item in self.item_list:
+            return eval('self.' + item)
+        else:
+            return []
+
     def obtain_peak_valley(self, item):
         """
         返回指定数组的峰谷值。

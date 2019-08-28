@@ -60,7 +60,7 @@ def new_experiment():
         life = form.life.data
         frequency = form.frequency.data
         period = form.period.data
-        timestamp = form.date.timestamp
+        timestamp = form.timestamp.data
         body = form.body.data
 
         experiment = Experiment(name=name,
@@ -231,9 +231,11 @@ def datafile_experiment(experiment_id):
             flash(u'本地文件' + f.filename + u'上传成功，上传后文件命名为' + filename + u'。', 'success')
             db.session.add(datafile)
             db.session.commit()
+            x_item = 'axial_disp'
+            y_item = 'axial_force'
             figure_name = filename.split('.')[0] + 'fig'
             figure_path = current_app.config['MECHANICS_PLOT_PATH']
-            create_plot_data(figure_path, figure_name, file_abspath)
+            create_plot_data(figure_path, figure_name, file_abspath, x_item, y_item)
             plot(figure_path, figure_name, ['.jpg'])
         else:
             flash(u'本地文件' + f.filename + u'格式不符合要求，上传失敗', 'danger')
@@ -617,12 +619,12 @@ def experiment_group(group_id):
     group = Group.query.get_or_404(group_id)
     form = GroupExpForm()
     if form.validate_on_submit():
-        expriment_name_add = form.expriment_name_add.data
-        expriment_name_add_list = expriment_name_add.split(',')
-        expriment_name_del = form.expriment_name_del.data
-        expriment_name_del_list = expriment_name_del.split(',')
+        experiment_name_add = form.experiment_name_add.data
+        experiment_name_add_list = experiment_name_add.split(',')
+        experiment_name_del = form.experiment_name_del.data
+        experiment_name_del_list = experiment_name_del.split(',')
 
-        for expriment_name in expriment_name_add_list:
+        for expriment_name in experiment_name_add_list:
             expriment = Experiment.query.filter_by(name=expriment_name).first()
             if expriment is not None:
                 group.experiments.append(expriment)
@@ -631,7 +633,7 @@ def experiment_group(group_id):
             elif expriment_name <> '':
                 flash('Experiment ' + expriment_name + ' is not exist.', 'danger')
 
-        for expriment_name in expriment_name_del_list:
+        for expriment_name in experiment_name_del_list:
             expriment = Experiment.query.filter_by(name=expriment_name).first()
             if expriment is not None:
                 group.experiments.remove(expriment)
@@ -647,12 +649,13 @@ def experiment_group(group_id):
 @login_required
 def get_data():
     experiments = Experiment.query.all()
+    # experiments = Experiment.query.order_by(Experiment.id.desc()).all()
     data_list = []
     exp_type_list = ['Fatigue', 'Fracture', 'Monotonic', 'other']
     for experiment in experiments:
         data_list.append({"1": str(experiment.name),
                           "2": experiment.author.name,
-                          "3": experiment.material.name,
+                          "3": str(experiment.material.name),
                           "4": exp_type_list[experiment.exp_type - 1],
                           "5": str(experiment.timestamp.date()),
                           "6": experiment.id})

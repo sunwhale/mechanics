@@ -36,7 +36,8 @@ class ExperimentForm(FlaskForm):
     life = IntegerField('Lifetime, cycle', default=1)
     frequency = FloatField('Frequency, Hz', default=1)
     period = FloatField('Period, s', default=1)
-    timestamp = DateField('Date', default='', validators=[DataRequired()], format='%Y/%m/%d', render_kw={'placeholder':'Year/Month/Day'})
+    timestamp = DateField('Date', default='', validators=[DataRequired()], format='%Y/%m/%d',
+                          render_kw={'placeholder': 'Year/Month/Day'})
     body = CKEditorField('Comments')
     submit = SubmitField(u'提交')
 
@@ -51,8 +52,8 @@ class ExperimentForm(FlaskForm):
         self.material.choices = [(material.id, material.name)
                                  for material in Material.query.order_by(Material.name).all()]
         self.axial_mode.choices = [(1, 'displacement, mm'), (2, 'axial strain, mm/mm'), (3, 'force, kN'), (4, 'other')]
-        self.torsional_mode.choices = [(1, 'rotation, deg'), (2, 'angle strain, deg'), (3, 'torque, N*m'), (4, 'other') ]
-        self.exp_type.choices = [(1, 'Fatigue'), (2, 'Fracture'), (3, 'Monotonic'), (4, 'other') ]
+        self.torsional_mode.choices = [(1, 'rotation, deg'), (2, 'angle strain, deg'), (3, 'torque, N*m'), (4, 'other')]
+        self.exp_type.choices = [(1, 'Fatigue'), (2, 'Fracture'), (3, 'Monotonic'), (4, 'other')]
 
 
 class CreateExperimentForm(ExperimentForm):
@@ -150,9 +151,10 @@ class DatafileForm(FlaskForm):
     datafile_type = SelectField(u'数据类型', coerce=int, default=1)
     description = TextAreaField(u'文件说明')
     submit = SubmitField(u'提交')
+
     def __init__(self, *args, **kwargs):
         super(DatafileForm, self).__init__(*args, **kwargs)
-        self.datafile_type.choices = [(1, u'第一周（时域）'), (2, u'半寿命周（时域）'), (3, u'全时域'), (4, u'峰谷值'), (5, u'其他') ]
+        self.datafile_type.choices = [(1, u'第一周（时域）'), (2, u'半寿命周（时域）'), (3, u'全时域'), (4, u'峰谷值'), (5, u'其他')]
 
 
 class CreateDatafileForm(DatafileForm):
@@ -216,6 +218,6 @@ class EditGroupForm(GroupForm):
 
 
 class GroupExpForm(FlaskForm):
-    expriment_name_add = StringField(u'添加试验')
-    expriment_name_del = StringField(u'删除试验')
+    experiment_name_add = StringField(u'添加试验', description=u"输入需要添加的试验编号, 多个试验请用英文逗号分隔。", render_kw={'placeholder': u'编号1,编号2,...'})
+    experiment_name_del = StringField(u'删除试验', description=u"输入需要删除的试验编号, 多个试验请用英文逗号分隔。", render_kw={'placeholder': u'编号1,编号2,...'})
     submit = SubmitField(u'提交')

@@ -14,20 +14,20 @@ from mechanics.python.Data import ExperimentData
 from mechanics.python.plot_format import plot_format
 
 
-def create_plot_data(figure_dirname=None, figure_filename=None, datafile_absname=None):
+def create_plot_data(figure_dirname=None, figure_filename=None, datafile_absname=None, x_item='axial_strain', y_item='axial_stress'):
     # ==============================================================================
     # x,y label
     # ==============================================================================
-    xlabel = xylabels['axial_strain']
-    ylabel = xylabels['axial_stress']
+    xlabel = xylabels[x_item]
+    ylabel = xylabels[y_item]
     # ==============================================================================
     # plot lines
     # ==============================================================================
     i = 0
     plot_data = PlotData()
     exp = ExperimentData(datafile_absname)
-    x = exp.axial_strain
-    y = exp.axial_stress
+    x = exp.obtain_item(x_item)
+    y = exp.obtain_item(y_item)
 
     plot_data.add_line(x,
                        y,
@@ -36,11 +36,10 @@ def create_plot_data(figure_dirname=None, figure_filename=None, datafile_absname
                        linelabel='',
                        linewidth=2,
                        linestyle='-',
-                       marker=marker_list[i],
+                       marker=None,
                        markersize=12,
                        color=color_list[i])
     i += 1
-    print figure_dirname, figure_filename
 
     plot_data.write_to_file(figure_dirname, figure_filename)
 
@@ -112,7 +111,7 @@ def plot(figure_dirname=None, figure_filename=None, save_types=[]):
         for save_type in save_types:
             figure_basename = figure_filename + save_type
             figure_absname = os.path.join(figure_dirname, figure_basename)
-            plt.savefig(figure_absname, dpi=150, transparent=True)
+            plt.savefig(figure_absname, dpi=100, transparent=True)
             print 'save as', figure_absname
     # plt.show()
     plt.close()

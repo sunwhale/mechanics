@@ -67,9 +67,11 @@
                     {% block nav_user %}
                     <li id="nav_user">
                     {% endblock nav_user %}
-                        <a href="#"><i class="fa fa-user"></i> <span class="nav-label">用戶管理</span> <span class="fa arrow"></span></a>
+                        <a href="#"><i class="fa fa-user"></i> <span class="nav-label">用戶</span> <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li id="manage_user"><a href="{{ url_for('admin.manage_user') }}">用户</a></li>
+                            {% if current_user.can('MODERATE') %}
+                            <li id="manage_user"><a href="{{ url_for('admin.manage_user') }}">用户管理</a></li>
+                            {% endif %}
                             <li id="edit_profile"><a href="{{ url_for('user.edit_profile') }}">个人设置</a></li>
                         </ul>
                     </li>
