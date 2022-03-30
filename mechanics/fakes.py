@@ -18,7 +18,7 @@ from mechanics.extensions import db
 from mechanics.models import User, Photo, Tag, Comment, Notification
 from mechanics.models import Material, Extensometer, Geometry, Experiment
 
-from python.Data import ExperimentLog
+from mechanics.python.Data import ExperimentLog
 
 
 fake = Faker()
@@ -32,7 +32,7 @@ def fake_admin():
                  # bio=fake.sentence(),
                  # website='http://sunjingyu.com',
                  confirmed=True,
-                 role_id=2)
+                 role_id=4)
     admin.set_password('helloflask')
     notification = Notification(message='Hello, welcome to Mechanics.', receiver=admin)
     db.session.add(notification)

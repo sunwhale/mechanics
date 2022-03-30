@@ -112,7 +112,7 @@ def plot(figure_dirname=None, figure_filename=None, save_types=[]):
             figure_basename = figure_filename + save_type
             figure_absname = os.path.join(figure_dirname, figure_basename)
             plt.savefig(figure_absname, dpi=100, transparent=True)
-            print 'save as', figure_absname
+            print('save as', figure_absname)
     # plt.show()
     plt.close()
 

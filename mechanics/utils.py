@@ -17,7 +17,7 @@ import PIL
 from PIL import Image
 from flask import current_app, request, url_for, redirect, flash
 from itsdangerous import BadSignature, SignatureExpired
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import serializer as Serializer
 
 from mechanics.extensions import db
 from mechanics.models import User

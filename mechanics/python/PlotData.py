@@ -144,7 +144,7 @@ class PlotData:
             filename = self.figure_name
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
-            print 'Create new dirname:', dirname
+            print('Create new dirname:', dirname)
         basename = filename + '.csv'
         absname = os.path.join(dirname, basename)
         resultfile = open(absname, 'w')  # write to csv
@@ -206,7 +206,7 @@ class PlotData:
             print >> resultfile, l[:-1]
 
         resultfile.close()
-        print 'save as', dirname + filename + '.csv'
+        print('save as', dirname + filename + '.csv')
 
     def read_from_file(self, dirname=None, filename=None):
         if dirname is None and filename is None:
@@ -289,7 +289,7 @@ class PlotData:
         if figure_path is not None and figure_name is not None:
             for save_type in save_types:
                 plt.savefig(figure_path + figure_name + save_type, dpi=150, transparent=True)
-                print 'save as', figure_path + figure_name + save_type
+                print('save as', figure_path + figure_name + save_type)
 
 
 # ==============================================================================

@@ -129,7 +129,7 @@ class ExperimentData:
             if end_cycle is None:
                 end_cycle = begin_cycle
             if self.total_axial_count == []:
-                print 'self.total_axial_count is empty.'
+                print('self.total_axial_count is empty.')
                 return []
             if self.axial_count_begin_index.has_key(begin_cycle) and self.axial_count_end_index.has_key(end_cycle):
                 return eval('self.' + item)[
@@ -173,8 +173,8 @@ class ExperimentData:
         strain_list = [strain_mean, strain_max, strain_mean, strain_min, strain_mean]
 
         outfile = open(self.filename, 'w')
-        print 'writing: ' + self.filename
-        print
+        print('writing: ' + self.filename)
+        print()
         outfile.writelines(
             'Axial Segment Count,Running Time,Temperature,Axial Displacement,Axial Force,Axial Strain,Axial Stress,Rotation,Torque,Angle Strain,Shear Stress,Equivalent Plastic Strain,Thermal Strain,Axial Total Strain\n')
         outfile.writelines('cycle,sec,C,mm,N,mm/mm,MPa,deg,N*m,-,MPa,-,mm/mm,mm/mm\n')
@@ -213,15 +213,15 @@ class ExperimentData:
 
     def update_stress(self):
         outfile = open(self.filename, 'w')
-        print 'writing: ' + self.filename
-        print
+        print('writing: ' + self.filename)
+        print()
         outfile.writelines(
             'Axial Segment Count,Running Time,Temperature,Axial Displacement,Axial Force,Axial Strain,Axial Stress,Rotation,Torque,Angle Strain,Shear Stress,Equivalent Plastic Strain,Thermal Strain,Axial Total Strain\n')
         outfile.writelines('cycle,sec,C,mm,N,mm/mm,MPa,deg,N*m,-,MPa,-,mm/mm,mm/mm\n')
 
         for i, time in enumerate(self.running_time[:]):
             add_stress = (self.axial_count[i]) ** 0.55 * 2.9
-            print add_stress
+            print(add_stress)
             self.axial_stress[i] += add_stress - 20
 
             line = ''
@@ -348,7 +348,7 @@ class SimulationData:
             if end_cycle is None:
                 end_cycle = begin_cycle
             if self.total_axial_count == []:
-                print 'self.total_axial_count is empty.'
+                print('self.total_axial_count is empty.')
             if self.axial_count_index.has_key(begin_cycle) and self.axial_count_index.has_key(end_cycle + 1):
                 return eval('self.' + item)[self.axial_count_index[begin_cycle]:self.axial_count_index[end_cycle + 1]]
         else:
@@ -507,7 +507,7 @@ class SimulationData3D:
             if end_cycle is None:
                 end_cycle = begin_cycle
             if self.total_axial_count == []:
-                print 'self.total_axial_count is empty.'
+                print('self.total_axial_count is empty.')
             if self.axial_count_index.has_key(begin_cycle) and self.axial_count_index.has_key(end_cycle + 1):
                 return eval('self.' + item)[self.axial_count_index[begin_cycle]:self.axial_count_index[end_cycle + 1]]
         else:
@@ -580,9 +580,9 @@ class ExperimentLog:
 
     def output(self, name):
         number = self.find(name)
-        print '=========================Experiment========================='
+        print('=========================Experiment=========================')
         for i in range(len(self.header)):
-            print '%-40s%-20s' % (self.header[i], self.data[number][i])
+            print('%-40s%-20s' % (self.header[i], self.data[number][i]))
 
     def find(self, name):
         number = int(np.where(self.number == name)[0][0])

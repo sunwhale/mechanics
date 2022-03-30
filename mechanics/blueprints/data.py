@@ -630,7 +630,7 @@ def experiment_group(group_id):
                 group.experiments.append(expriment)
                 db.session.commit()
                 flash('Append ' + expriment_name + ' experiment in the group.', 'success')
-            elif expriment_name <> '':
+            elif expriment_name != '':
                 flash('Experiment ' + expriment_name + ' is not exist.', 'danger')
 
         for expriment_name in experiment_name_del_list:
@@ -639,7 +639,7 @@ def experiment_group(group_id):
                 group.experiments.remove(expriment)
                 db.session.commit()
                 flash('Remove ' + expriment_name + ' experiment in the group.', 'warning')
-            elif expriment_name <> '':
+            elif expriment_name != '':
                 flash('Experiment ' + expriment_name + ' is not exist.', 'danger')
 
     return render_template('data/manage_experiment_group.html', form=form, group=group)
@@ -663,7 +663,7 @@ def get_data():
     data = {
         "data": data_list
     }
-    # print data
+    # print(data)
     return jsonify(data)
 
 
@@ -685,7 +685,7 @@ def get_data_user():
     data = {
         "data": data_list
     }
-    # print data
+    # print(data)
     return jsonify(data)
 
 
@@ -708,7 +708,7 @@ def get_data_group(group_id):
     data = {
         "data": data_list
     }
-    # print data
+    # print(data)
     return jsonify(data)
 
 
@@ -729,7 +729,7 @@ def get_data_datafile():
     data = {
         "data": data_list
     }
-    print data
+    # print(data)
     return jsonify(data)
 
 
