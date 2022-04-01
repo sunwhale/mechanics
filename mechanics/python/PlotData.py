@@ -203,7 +203,7 @@ class PlotData:
                     l += '%s,' % str(data_list[j][i])
                 else:
                     l += '%s,' % ''
-            print >> resultfile, l[:-1]
+            resultfile.write(l[:-1] + '\n')
 
         resultfile.close()
         print('save as', dirname + filename + '.csv')

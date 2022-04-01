@@ -24,6 +24,7 @@ from mechanics.utils import redirect_back
 
 from mechanics.python.plot_data_template import create_plot_data, plot
 from mechanics.python.verification import verification
+from mechanics.python.neper import neper
 
 data_bp = Blueprint('data', __name__)
 
@@ -226,7 +227,7 @@ def datafile_experiment(experiment_id):
                             size=size,
                             datafile_type=datafile_type,
                             experiment_id=experiment_id)
-
+        neper()
         if verification(file_abspath):
             flash(u'本地文件' + f.filename + u'上传成功，上传后文件命名为' + filename + u'。', 'success')
             db.session.add(datafile)

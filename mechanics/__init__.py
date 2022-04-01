@@ -18,6 +18,7 @@ from mechanics.blueprints.auth import auth_bp
 from mechanics.blueprints.main import main_bp
 from mechanics.blueprints.user import user_bp
 from mechanics.blueprints.data import data_bp
+from mechanics.blueprints.cpfem import cpfem_bp
 from mechanics.extensions import bootstrap, db, login_manager, mail, dropzone, moment, whooshee, avatars, csrf
 from mechanics.models import Role, User, Photo, Tag, Follow, Notification, Comment, Collect, Permission, Geometry, Extensometer, Material
 from mechanics.settings import config
@@ -61,6 +62,7 @@ def register_blueprints(app):
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(ajax_bp, url_prefix='/ajax')
     app.register_blueprint(data_bp, url_prefix='/data')
+    app.register_blueprint(cpfem_bp, url_prefix='/cpfem')
 
 
 def register_shell_context(app):
